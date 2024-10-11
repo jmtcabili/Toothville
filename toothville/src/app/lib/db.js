@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 
-const MONGODB_URI = process.env.MONGO_URI
+const MONGODB_URI = process.env.MONGODB_URI
+
 
 if (!MONGODB_URI) {
     throw new Error(
@@ -23,7 +24,7 @@ async function dbConnect() {
             bufferCommands: false,
         }
         cached.promise = mongoose.connect(MONGODB_URI, opts).then(mongoose => {
-            console.log('Db connected')
+            console.log('  DB CONNECTED...')
             return mongoose
         })
     }
