@@ -1,6 +1,6 @@
 
 import Image from "next/image";
-
+import Link from 'next/link'
 
 
 export default function Home() {
@@ -100,6 +100,7 @@ export default function Home() {
           />
           Go to nextjs.org →
         </a>
+        <Link href = 'signup'>Signup</Link>
       </footer>
     </div>
   );
