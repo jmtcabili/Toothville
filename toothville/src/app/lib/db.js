@@ -45,8 +45,7 @@ const patientSchema = new Schema ({
     dentist: String
 })
 
-const patientModel = mongoose.model('patient', patientSchema)
-
+const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 
 export { patientModel }; 
 export default dbConnect
