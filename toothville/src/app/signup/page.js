@@ -1,12 +1,8 @@
 
-
-export default function Signup(){
-
- return (
-    <>
-        <h1>
-            sample link
-        </h1>
-    </>
-)   
+export default function signup(){
+    return (
+        <>
+            <h1> sample sign up</h1>
+        </>
+    )
 }
