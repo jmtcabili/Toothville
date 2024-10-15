@@ -40,9 +40,18 @@ async function dbConnect() {
 
 const patientSchema = new Schema ({
     name: String, 
+    nickname: String,
     age: Number, 
+    birthday: Date, 
     sex: String, 
-    dentist: String
+    mobile: String,
+    email: String,
+    civilStat: String, 
+    address: String, 
+    occupation: String,
+    guardianName: String, 
+    recordDate: Date, 
+    dentist: String,
 })
 
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
