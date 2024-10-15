@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+const {Schema} = mongoose
 
 const MONGODB_URI = process.env.MONGODB_URI
 
@@ -38,4 +39,26 @@ async function dbConnect() {
     return cached.conn
 }
 
+
+const patientSchema = new Schema ({
+    name: String, 
+    nickname: String,
+    age: Number, 
+    birthday: Date, 
+    sex: String, 
+    mobile: String,
+    email: String,
+    civilStat: String, 
+    address: String, 
+    occupation: String,
+    guardianName: String, 
+    recordDate: Date, 
+    dentist: String,
+})
+
+const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
+
+export { patientModel }; 
 export default dbConnect
+
+
