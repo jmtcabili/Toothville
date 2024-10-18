@@ -9,9 +9,12 @@ export const theme = {
     colors: {
       background: "var(--background)",
       foreground: "var(--foreground)",
-      nav_gray: "#EEEEEE",
+      nav_gray: "#D9E3EA",
       nav_blue: "#155589",
       nav_red: "#FF0000"
+    },
+    fontFamily: {
+      anekOdia: ['var(--font-anek-odia)']
     },
   },
 };
