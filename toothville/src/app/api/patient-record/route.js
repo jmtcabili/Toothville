@@ -6,7 +6,7 @@ await dbConnect();
 
 export async function POST(request) {
 
-  const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, recordDate, dentist } = await request.json(); // expects patient information
+  const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, recordDate, concern, dentist } = await request.json(); // expects patient information
   const tempPatient = new patientModel({
     name: name,
     age: age,
@@ -18,6 +18,7 @@ export async function POST(request) {
     address: address,
     occupation: occupation,
     recordDate: recordDate,
+    concern: concern, 
     dentist: dentist
   });
 
@@ -43,7 +44,7 @@ export async function PUT(request){
   const user = await patientModel.findById(id)
 
   //get updated fields
-  const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, dentist } = await request.json(); // expects patient information
+  const { name, age, birthday, sex, mobile, email, civilStat, address, occupation,concern, dentist } = await request.json(); // expects patient information
 
   //change fields of queried user
   if (name != undefined) user.name = name;
@@ -55,6 +56,7 @@ export async function PUT(request){
   if (civilStat != undefined) user.civilStat = civilStat;
   if (address != undefined) user.address = address;
   if (occupation != undefined) user.occupation = occupation;
+  if (concern != undefined) user.concern = concern; 
   if (dentist != undefined) user.dentist = dentist;
   
   await user.save()

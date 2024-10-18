@@ -53,6 +53,7 @@ const patientSchema = new Schema ({
     occupation: String,
     guardianName: String, 
     recordDate: Date, 
+    concern: String, 
     dentist: String,
 })
 
