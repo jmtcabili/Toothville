@@ -7,7 +7,7 @@ export default function DashboardLayout({
   return (
       <>
           <Navbar></Navbar>
-          <div className='bg-nav_gray'>          
+          <div>
             {children}
           </div>
       </>
