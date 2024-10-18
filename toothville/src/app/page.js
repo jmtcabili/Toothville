@@ -9,9 +9,6 @@ export default function Home() {
         <Link href = "/home"> Login </Link>
         <br></br>
         <Link href = '/signup'>Signup</Link>
-        <div className = 'font-anekOdia text-3xl font-bold'>
-          sample
-        </div>
       </div>
     </>
   );

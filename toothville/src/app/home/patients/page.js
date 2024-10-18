@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import {
   Table,
   TableBody,
@@ -9,24 +12,32 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
+import Link from 'next/link'
 
 
+export default function PatientList() {
 
-export default async function PatientList() {
+    const [patients, setPatients] = useState(null);
+    useEffect(() => {
+        async function fetchPatientList(){
+            let response = await fetch('http://localhost:3000/api/patient-record')
+            let data = await response.json();
+            setPatients(data)
+        }
+        fetchPatientList()
+    }, [])
 
-  let patients =[]
-  try{
-    const response = await fetch('http://localhost:3000/api/patient-record')
-    patients = await response.json()
-    console.log(patients)
-  }catch{
-    console.error('Failed to fetch patients:', error)
+  if (patients == null){
+    return(
+        <>
+            <div>Retrieving patients...</div>
+        </>
+    )
   }
-  
   return (
     <>
       <Table>
-      <TableCaption>List of upcoming dental appointments.</TableCaption>
+      <TableCaption>List of patients.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead className="w-[200px]">Name</TableHead>
@@ -36,16 +47,18 @@ export default async function PatientList() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {patients.map((appointment) => (
-          <TableRow key={appointment.id}>
-            <TableCell className="font-medium">{appointment.name}</TableCell>
-            <TableCell>
-              
+        {patients.map((patient, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">
+                <Link href = {`/home/patients/${patient._id}`}>
+                    {patient.name}
+                </Link>
             </TableCell>
-            <TableCell>sdv</TableCell>
+            <TableCell>{patient.concern}</TableCell>
+            <TableCell>{patient._id.slice(-4)}</TableCell>
             <TableCell>
               <div className="flex items-center gap-2">
-                {appointment.dentist}
+                {patient.dentist}
               </div>
             </TableCell>
           </TableRow>
@@ -53,7 +66,7 @@ export default async function PatientList() {
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={4} className="text-right">Total Appointments: {patients.length}</TableCell>
+          <TableCell colSpan={4} className="text-left">Total patients: {patients.length}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
