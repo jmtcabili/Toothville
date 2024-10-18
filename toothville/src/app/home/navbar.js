@@ -7,9 +7,10 @@ function determineSection(){
   if (path === '/home'){
       return("Home");
   }
-  if (path === '/home/patients'){
+  else{
     return ("Patients")
   }
+  
 }
 
 export default function navbar() {

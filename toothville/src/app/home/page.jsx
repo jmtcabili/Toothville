@@ -6,8 +6,6 @@ import Link from 'next/link';
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 
-
-
 const chartConfig = {
   patients: {
     label: "patients",
