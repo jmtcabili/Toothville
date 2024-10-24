@@ -1,3 +1,4 @@
+import PatientSummary from "../PatientSummary"
 
 export default async function page({params}) {
     const { id }  = params
@@ -6,7 +7,7 @@ export default async function page({params}) {
 
     return (
     <>
-        {patient.name}
+        <PatientSummary params={params}/>
     </>
     )
     
