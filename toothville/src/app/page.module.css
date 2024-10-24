@@ -35,7 +35,13 @@
   }
 
 @media (max-width: 480px) {
-    
+    .form-container {
+      min-height: 600px;
+      padding: 50px 40px;
+    }
+    .logo {
+      margin: 0px 0px 30px 0px;
+    }
 }
 
   
