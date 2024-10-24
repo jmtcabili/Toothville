@@ -44,7 +44,7 @@ const Page = () => {
     <div className={styles.container}>
       <div className={styles["form-container"]}>
         <img
-          src="/assets/Toothville logo PNG.png"
+          src="/assets/banner.png"
           alt="Toothville Logo"
           className={styles.logo}
         />
