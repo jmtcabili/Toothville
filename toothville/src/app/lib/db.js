@@ -57,9 +57,18 @@ const patientSchema = new Schema ({
     dentist: String,
 })
 
-const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
+const notesSchema = new Schema ({
+    patientID: String,
+    date: Date, 
+    procedureName: String, 
+    comment: String, 
+})
 
-export { patientModel }; 
+const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
+const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
+
+export { patientModel}; 
+export { notesModel }; 
 export default dbConnect
 
 
