@@ -9,7 +9,7 @@ export const theme = {
     colors: {
       background: "var(--background)",
       foreground: "var(--foreground)",
-      nav_gray: "#EEEEEE",
+      nav_gray: "#f6f6f6",
       nav_blue: "#155589",
       nav_red: "#FF0000"
     },

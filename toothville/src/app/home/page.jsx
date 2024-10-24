@@ -5,6 +5,7 @@ import Link from 'next/link';
 //chart imports
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+import styles from './home.module.css'
 
 const chartConfig = {
   patients: {
@@ -56,16 +57,21 @@ function Chart() {
 function Profile(){
   return(
   <>
-    <div className="flex flex-row gap-x-2 justify-start items-center bg-white py-4 px-2 w-full rounded-lg max-h-[200px]">
+    <div className={styles.profileContainer}>
+      {/* Profile Picture */}
       <img
-        src="/path-to-your-image.jpg"
+        src="/assets/defaultpfp.webp"
         alt="Profile Picture"
-        className="w-20 h-20 rounded-full border-4 border-nav_blue object-cover"
+        className={styles.profilePicture}
+        width={80}
+        height={80}
       />
-      <div className="bg-black h-full min-h-[70px] w-[2px]"></div>
-      <div id="details" className="flex flex-col justify-center items-left">
-        <div className="font-bold text-xl">{user.name}</div>
-        <div id="usertype" className="font-extralight">{user.type}</div>
+      <div className={styles.divider}></div>
+
+      {/* User Details */}
+      <div id="details" className={styles.details}>
+        <div className={styles.userName}>{user.name}</div>
+        <div className={styles.userType}>{user.type}</div>
       </div>
     </div>
       
@@ -121,7 +127,7 @@ export default function Dashboard() {
   return (
     <>
 
-        <div className="flex flex-col gap-y-2 justify-start items-center py-6 px-6">
+        <div className={styles.dashboard}>
           <Profile/>
           <hr />
           <div> 
