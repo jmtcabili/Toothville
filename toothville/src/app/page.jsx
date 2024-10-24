@@ -90,7 +90,7 @@ const Page = () => {
             href="/signup"
             className={`${styles.commonButton} ${styles.thirdButton}`}
           >
-            Don’t have an account?
+            Don't have an account?
           </Link>
         </form>
       </div>

@@ -109,11 +109,7 @@ function Actions(){
               </div>
             </div>
           </div>
-        </div>
-        
-       
-      
-      
+        </div>    
     </>
   )
   
