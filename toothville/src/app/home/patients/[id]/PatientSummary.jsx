@@ -1,11 +1,24 @@
+"use client"
 
+//transfer to layout
+import {useState, useEffect} from 'react'
 
-export default async function PatientSummary({params}) {
+export default function PatientSummary({params}) {
     const { id }  = params
     const path = `/home/patients/${id}`
-  
-    let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
-    let patient = await response.json()
+    
+    const [patient, setPatient] = useState(); 
+
+    useEffect(() => {
+        async function fetchPatient() {
+            let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
+            let data = await response.json()
+            setPatient(data); 
+        }        
+        fetchPatient(); 
+    }, [])
+
+    
 
     if (!patient) return <div> Loading... </div>
 
