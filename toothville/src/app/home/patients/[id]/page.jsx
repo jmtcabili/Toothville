@@ -13,7 +13,7 @@ export default async function PatientDetails({params}){
     return (
     <>
         <PatientSummary params = {params}></PatientSummary>
-        <div id="bio" className='bg-white px-3 py-3 mb-4 rounded-md'>
+        <div id="bio" className='bg-white px-3 py-3 mb-4 rounded'>
             <h2 className='font-bold mb-2'>Bio</h2>
             <div id="bio-info" className='font-light '>
                 <span>{patient.age} {patient.sex}</span><br />
@@ -25,7 +25,7 @@ export default async function PatientDetails({params}){
                 More
             </div>
         </div>
-        <div id="patient-actions" className = "px-3 bg-white mb-2">
+        <div id="patient-actions" className = "px-3 bg-white mb-2 rounded">
             
             <div id = "appointments" className="flex flex-row justify-start gap-2 py-4 border-b border-gray-200">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
