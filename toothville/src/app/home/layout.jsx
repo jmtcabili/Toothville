@@ -1,4 +1,4 @@
-import Navbar from './navbar.js'
+import Navbar from './navbar.jsx'
 
 
 export default function DashboardLayout({
