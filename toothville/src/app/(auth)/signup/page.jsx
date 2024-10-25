@@ -31,7 +31,7 @@ const SignUp = () => {
       });
 
       if (res.status === 201) {
-        router.push("/login?success=Account created");
+        router.push("/?success=Account created");
       } else {
         setError("Error creating account");
       }
@@ -83,7 +83,7 @@ const SignUp = () => {
             Register
           </button>
 
-          <Link href="/login" className={`${styles.commonButton} ${styles.secondaryButton}`}>
+          <Link href="/" className={`${styles.commonButton} ${styles.secondaryButton}`}>
             Already have an account?
           </Link>
         </form>
