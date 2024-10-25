@@ -4,7 +4,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://https://github.com/RyanMB13/Toothville-Family-Dental-Software">
     <img src="toothville/public/assets/banner.png" alt="Logo">
   </a>
 
