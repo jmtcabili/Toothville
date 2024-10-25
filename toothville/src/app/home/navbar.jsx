@@ -34,7 +34,6 @@ export default function Navbar() {
         <div className={styles.line}></div>
       </div>
 
-      {/* Center Nav Items */}
       <div className={`${styles['nav-items']} ${isOpen ? styles.open : ''}`}>
         <div className={`${styles['nav-item']} ${styles.active}`}>
           <span>Home</span>
@@ -53,7 +52,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Profile with Picture */}
       <div className={styles['profile-button']}>
         <img
           src="/assets/defaultpfp.webp"

@@ -126,20 +126,25 @@ function Actions(){
 export default function Dashboard() {
   return (
     <>
-
-        <div className={styles.dashboard}>
-          <Profile/>
-          <hr />
-          <div> 
-              <h2 className="font-medium py-2 mb-2 text-align-center w-full">WEEKLY PATIENT COUNT</h2>
-              <div id="chart" className="mb-2">
-                <Chart/>
-              </div>
-          </div>
-          <Actions/>
-            
+<div className={styles.dashboard}>
+      <h1 className={styles.dashboardHeader}>Dashboard</h1>
+      
+      {/* Welcome Section */}
+      <div className={styles.welcomeSection}>
+        <h2>Good Morning, {user.name}</h2>
+        <p className={styles.subText}>You have no appointments today</p>
+        <button className={styles.appointmentsButton}>See Today's Appointments</button>
+      </div>
+  {/* <Profile /> */}
+      <hr />
+      <div> 
+        <h2 className="font-medium py-2 mb-2 text-align-center w-full">WEEKLY PATIENT COUNT</h2>
+        <div id="chart" className="mb-2">
+          <Chart />
         </div>
-           
+      </div>
+      <Actions />
+    </div>           
     </>
   )
 }

@@ -34,7 +34,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 10px 30px;
+  padding: 15px 30px;
 }
 
 .nav-item:hover {
@@ -71,8 +71,7 @@
 }
 
 .profile-button:hover {
-  background-color: #0d2a5b;
-  color: white;
+  background-color: #f0f0f0;
 }
 .profile-details {
   display: flex;
@@ -119,8 +118,55 @@
   flex-direction: column;
   gap: 0.5rem;
   justify-content: flex-start;
-  align-items: center;
 }
+
+.dashboardHeader {
+  font-size: 20pt;
+  font-weight: 530;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.welcomeSection {
+  background-image: url("/assets/bannerbg.png");
+  background-size: cover;
+  background-position: 25%;
+  background-repeat: no-repeat;
+  color: white;
+  padding: 50px;
+  border-radius: 10px;
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.welcomeSection h2 {
+  font-size: 20pt;
+  font-weight: bold;
+}
+
+.subText {
+  font-size: 16pt;
+  margin-top: 5px;
+  margin-bottom:10px;
+  color: #e0e0e0;
+}
+
+.appointmentsButton {
+  margin-top: 15px;
+  padding: 10px 20px;
+  background-color: white;
+  color: #0d2a5b;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.appointmentsButton:hover {
+  background-color: #f0f0f0;
+}
+
 
 .divider {
   background-color: black;
@@ -226,6 +272,27 @@
     width: 100%;
     padding: 10px 0;
     border-radius: 0px;
-  
+  }
+  .welcomeSection {
+    padding: 20px 20px;
+  }
+  .welcomeSection h2 {
+    font-size: 20pt;
+  }
+  .welcomeSection .subText {
+    font-size: 14pt;
+  }
+  .appointmentsButton {
+    font-size: 10pt;
+    padding: 7px 17px;
+  }
+  .dashboardHeader {
+    margin: 0px;
+    color: #333;
+    font-size: 18pt;
+  }
+
+  .dashboard {
+    margin-top: -15px;
   }
 }
