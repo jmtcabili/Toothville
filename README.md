@@ -4,7 +4,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://https://github.com/RyanMB13/Toothville-Family-Dental-Software">
+  <a href="https://github.com/RyanMB13/Toothville-Family-Dental-Software">
     <img src="toothville/public/assets/banner.png" alt="Logo">
   </a>
 
