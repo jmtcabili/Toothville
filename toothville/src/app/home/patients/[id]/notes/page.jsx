@@ -11,6 +11,8 @@ import {
 
 export default function page({params}) {
     const { id }  = params
+    const [currDate, setDate] = useState((new Date()).toISOString().split("T")[0]);
+    const formRef = useRef(); 
     const dateRef = useRef(); 
     const procedureRef = useRef();
     const commentsRef = useRef(); 
@@ -19,6 +21,9 @@ export default function page({params}) {
     //let patient = await response.json()
     //use shadcn form next time -> validation 
 
+    function handleDateChange(e){
+        setDate(e.target.value)
+    }
     const handleSubmit = async (e) => {
         e.preventDefault(); 
         const formData = {
@@ -37,6 +42,7 @@ export default function page({params}) {
             }); 
             const result = await response.json(); 
             if (response.ok){
+                fetchPatientNotes(); 
                 console.log('note added', result);
             }else{
                 console.log('error', result);                
@@ -46,6 +52,7 @@ export default function page({params}) {
         catch (error){
             console.error('req failed', error);
         }
+        formRef.current.reset(); 
     }
 
     function AddNote(){
@@ -54,9 +61,9 @@ export default function page({params}) {
         <>
             <div className="bg-white px-3 py-3 rounded mb-2">
                 Create note
-                <form  className = "py-2 flex flex-col">
+                <form ref = {formRef} className = "py-2 flex flex-col">
                     <label htmlFor="date" className = "font-semibold mb-1">Date: </label>
-                    <input type="date" ref = {dateRef} required className = "border mb-2"/>
+                    <input type="date" ref = {dateRef} value = {currDate} onChange={handleDateChange} required className = "border mb-2"/>
                     <label htmlFor="procedure" className = "font-semibold mb-1">Procedure: </label>
                     <input type="text" ref = {procedureRef} required className="border mb-1"/>
                     <label htmlFor="procedure" className = "font-semibold mb-1">Comments: </label>
@@ -88,13 +95,13 @@ export default function page({params}) {
     }
 
     const [notes, setNotes] = useState([]); 
-
+    
+    async function fetchPatientNotes(){
+        let result = await fetch(`http://localhost:3000/api/notes?patientID=${id}`)
+        let patientNotes = await result.json(); 
+        setNotes(patientNotes); 
+    }
     useEffect(() => {
-        async function fetchPatientNotes(){
-            let result = await fetch(`http://localhost:3000/api/notes?patientID=${id}`)
-            let patientNotes = await result.json(); 
-            setNotes(patientNotes); 
-        }
         fetchPatientNotes(); 
     }, [])
 
