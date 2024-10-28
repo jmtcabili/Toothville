@@ -1,4 +1,4 @@
-import dbConnect from '../../lib/db'
+import dbConnect, { patientModel } from '../../lib/db'
 import { notesModel } from '../../lib/db'
 import { NextResponse } from 'next/server'
 
@@ -27,3 +27,37 @@ export async function GET(request){
     return NextResponse.json(patientNotes)
     
 }
+
+export async function PUT(request){
+
+
+    const {date, procedureName, comment} = await request.json(); 
+
+    //get node id 
+    const {searchParams} = new URL(request.url)
+    const noteID = searchParams.get("_id")
+
+    const currNote = await notesModel.findById(noteID);
+
+    currNote.date = date; 
+    currNote.procedureName = procedureName;
+    currNote.comment = comment;
+
+    await currNote.save(); 
+
+    return NextResponse.json({message: "note updated"}); 
+}
+
+export async function DELETE(request){
+
+    //get node id 
+    const {searchParams} = new URL(request.url)
+    const noteID = searchParams.get("_id")
+
+    //delete user 
+    await notesModel.deleteOne({'_id': noteID})
+
+    return NextResponse.json({message: "note deleted"})
+
+}
+
