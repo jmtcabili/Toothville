@@ -142,8 +142,8 @@ export default function page({params}) {
         const accordionContent = (update == true) ? 
         (<>
             <div>Date: <input type="date" value={noteDate} onChange={(e) => setNoteDate(e.target.value)}></input></div>
-            <div>Comments: <br />
-                <textarea value={noteComment} onChange = {(e => setComment(e.target.value))} className="border mb-4 min-h-[80px]"/>
+            <div className="flex flex-col"> Comments: &nbsp; 
+                <textarea value={noteComment} onChange = {(e => setComment(e.target.value))} className="border mb-4 min-h-[80px] w-full"/>
             </div>
             <div className="flex flex-row gap-2 py-2">
                 <button className="px-2 py-2 text-white bg-nav_blue rounded-md min-w-[75px]"
@@ -154,8 +154,8 @@ export default function page({params}) {
         </>) : 
         (<>
             <div>Date: {noteDate}</div>
-            <div className="flex flexrow">Comments: &nbsp; 
-                <textarea readOnly value={comment} className = "min-h-[80px]"></textarea>
+            <div className="flex flex-col">Comments: &nbsp; 
+                <textarea readOnly value={comment} className = "min-h-[80px] w-full"></textarea>
             </div>
             
             <div className="flex flex-row gap-2 py-2">

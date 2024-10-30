@@ -49,11 +49,11 @@ const SignUp = () => {
           className={styles.logo}
         />
         <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Welcome! :3
+          Welcome!
         </div>
 
         <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Nice to meet you &lt;3
+          Sign up for an account!
         </div>
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.inputGroup}>
