@@ -17,7 +17,7 @@ export default async function PatientDetails({params}){
             <h2 className='font-bold mb-2'>Bio</h2>
             <div id="bio-info" className='font-light '>
                 <span>{patient.age} {patient.sex}</span><br />
-                Born on {patient.birthday} <br />
+                Born on {new Date(patient.birthday).toISOString().split("T")[0]} <br />
                 {patient.mobile} <br />
                 {patient.email}
             </div>
