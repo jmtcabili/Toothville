@@ -2,10 +2,13 @@
 
 //next imports
 import Link from 'next/link';
+import Image from 'next/image'; 
+
 //chart imports
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 import styles from './home.module.css'
+
 
 const chartConfig = {
   patients: {
@@ -42,7 +45,7 @@ function Chart() {
           tickFormatter={(value) => value.slice(0, 3)}
         />
         <YAxis
-          ickLine={false}
+          tickLine={false}
           tickMargin={10}
           axisLine={false}
         />
@@ -83,28 +86,26 @@ function Actions(){
   return (
     <>
         <div className="grid grid-cols-2 rounded-full w-full">
-          <div className="col-span-2">
-            <div id = "action1" className="flex flex-row gap-x-2 justify-evenly items-center bg-white py-4 px-2 w-full rounded-t-lg max-h-[200px]">
-              <img
-                src="/path-to-your-image.jpg"
-                alt="icon"
-                className="w-20 h-20 rounded-full border-4 border-nav_blue object-cover"
-              />
-              <div id="details" className="flex flex-col justify-center items-left">
-                <div className="font-bold ">See Patient</div>
-                <div id="usertype" className="font-extralight"></div>
-              </div>
+            <div className="col-span-2">
+                <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-white py-4 px-2 w-full rounded-t-lg min-h-[100px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                    </svg>
+                    <div id="details" className="flex flex-col justify-center items-left">
+                        <Link href = "/home/see-patient" className='font-bold'>See Patient</Link>
+                    </div>
+                </div>
             </div>
-          </div>
-          <div id = "action2" className="">
-            <div className="flex flex-row gap-x-2 justify-start items-center bg-nav_blue py-6 px-2 w-full rounded-bl-lg max-h-[200px]">
-              <div id="details" className="flex flex-col justify-center items-left">
-                <div className="font-bold text-white">
-                  <Link href='/home/patients'>View patients</Link></div>
-                <div id="usertype" className="font-extralight"></div>
-              </div>
+            <div id = "action2" className="">
+                <div className="flex flex-row gap-x-2 justify-start items-center bg-nav_blue py-6 px-2 w-full rounded-bl-lg max-h-[200px]">
+                    <div id="details" className="flex flex-col justify-center items-left">
+                        <div className="font-bold text-white">
+                            <Link href='/home/patients'>View patients</Link>
+                        </div>
+                        <div id="usertype" className="font-extralight"></div>
+                    </div>
+                </div>
             </div>
-          </div>
 
           
           <div id = "action3" className="">
@@ -132,8 +133,6 @@ export default function Dashboard() {
       {/* Welcome Section */}
       <div className={styles.welcomeSection}>
         <h2>Good Morning, {user.name}</h2>
-        <p className={styles.subText}>You have no appointments today</p>
-        <button className={styles.appointmentsButton}>See Today's Appointments</button>
       </div>
   {/* <Profile /> */}
       <hr />
