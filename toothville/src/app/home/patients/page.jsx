@@ -17,11 +17,11 @@ import Link from 'next/link'
 
 export default function PatientList() {
 
-  const [patients, setPatients] = useState(null);
+  const [patients, setPatients] = useState([]);
   const [nameSearch, setNameSearch] = useState("");
   const [dentistSearch, setDentistSearch] = useState("All");
   const [dentists, setDentists] = useState([]);
-  
+  const [filteredPatients, setFilteredPatients] = useState([]); 
 
   useEffect(() => {
       async function fetchPatientList(){
@@ -42,11 +42,17 @@ export default function PatientList() {
         </>
     )
   }else{
-    const filteredPatients = patients.filter(
-      (patient) =>
-        patient.name.toLowerCase().includes(nameSearch.toLowerCase()) &&
-        (dentistSearch === "All" || patient.dentist === dentistSearch)
-    )
+
+    
+    const filteredPatients = patients.filter(withinSearch)
+    function withinSearch(patient){
+        if (patient.name != null){
+            return(patient.name.toLowerCase().includes(nameSearch.toLowerCase()) &&
+            (dentistSearch === "All" || patient.dentist === dentistSearch))
+        }
+    }
+    
+    
     return (
     
       <>

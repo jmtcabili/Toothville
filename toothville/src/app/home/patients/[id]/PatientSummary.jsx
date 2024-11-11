@@ -3,6 +3,9 @@
 //transfer to layout
 import {useState, useEffect} from 'react'
 
+import Image from 'next/image';
+import sample from '../../../../../public/assets/dentist-2-svgrepo-com.svg'
+
 export default function PatientSummary({params}) {
     const { id }  = params
     const path = `/home/patients/${id}`
@@ -34,6 +37,7 @@ export default function PatientSummary({params}) {
                 </div>
             </div>
             <div id="image" className='rounded-full border border-black h-32 w-32'>
+                
             </div>
         </div> 
         <div id="icons" className='flex justify-between py-4 mb-2'>
