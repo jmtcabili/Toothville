@@ -7,6 +7,7 @@ import Image from 'next/image';
 //chart imports
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+import { UsersIcon, UserPlusIcon, BanknotesIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/solid'
 import styles from './home.module.css'
 
 
@@ -32,27 +33,36 @@ const chartData = [
   { "day": "Sunday", "patients": 15 }
 ]
 
+function StatCard({ title, count, iconBgColor, icon: Icon }) {
+  return (
+    <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-[48%] md:w-1/4 lg:w-[23%] mx-0 mb-4 md:mb-0">
+      <div className="flex justify-between items-center p-4">
+        <h3 className="text-gray-700 font-semibold">{title}</h3>
+        <span className={`p-2 rounded-lg ${iconBgColor}`}>
+          <Icon className="h-6 w-6 text-white" />
+        </span>
+      </div>
+      <h4 className="text-2xl font-bold mt-2 px-4 pb-4">{count}</h4>
+
+      <div className={`w-full h-1 rounded-b-lg ${iconBgColor}`}></div>
+    </div>
+  );
+}
+
 function Chart() {
   return (
-    <ChartContainer config={chartConfig} className="min-h-[150px] h-1/2 md:min-h-[300px] w-5/6">
-      <BarChart accessibilityLayer data={chartData}>
-        <CartesianGrid vertical={true}/>
-        <XAxis
-          dataKey="day"
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-          tickFormatter={(value) => value.slice(0, 3)}
-        />
-        <YAxis
-          tickLine={false}
-          tickMargin={10}
-          axisLine={false}
-        />
-        <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="patients" fill="var(--color-patients)" radius={4} />
-      </BarChart>
-    </ChartContainer>
+    <div className="bg-white p-6 rounded-lg shadow-lg mt-4 w-full md:w-3/4">
+      <h2 className="font-medium py-2 mb-2 text-center">WEEKLY PATIENT COUNT</h2>
+      <ChartContainer config={chartConfig} className="min-h-[150px] h-1/2 md:min-h-[300px] w-full">
+        <BarChart data={chartData}>
+          <CartesianGrid vertical={true} />
+          <XAxis dataKey="day" tickLine={false} tickMargin={10} axisLine={false} />
+          <YAxis tickLine={false} tickMargin={10} axisLine={false} />
+          <ChartTooltip content={<ChartTooltipContent />} />
+          <Bar dataKey="patients" fill="var(--color-patients)" radius={4} />
+        </BarChart>
+      </ChartContainer>
+    </div>
   )
 }
 
@@ -127,23 +137,52 @@ function Actions(){
 export default function Dashboard() {
   return (
     <>
-<div className={styles.dashboard}>
-      <h1 className={styles.dashboardHeader}>Dashboard</h1>
-      
-      {/* Welcome Section */}
-      <div className={styles.welcomeSection}>
-        <h2>Good Morning, {user.name}</h2>
-      </div>
-  {/* <Profile /> */}
-      <hr />
-      <div> 
-        <h2 className="font-medium py-2 mb-2 text-align-center w-full">WEEKLY PATIENT COUNT</h2>
-        <div id="chart" className="mb-2">
-          <Chart />
+      <div className={styles.dashboard}>
+        <h1 className={styles.dashboardHeader}>Dashboard</h1>
+
+        {/* Welcome Section */}
+        <div className={styles.welcomeSection}>
+          <h2>Good Morning, Dr. Michelle Lajara</h2>
+          <p className={styles.subText}>Today is Tuesday, November 12, 2024.</p>
+          <button className={styles.appointmentsButton}>See Today's Appointments</button>
         </div>
+
+        {/* Stat Cards */}
+        <div className="flex flex-wrap justify-between gap-1">
+          <StatCard 
+            title="Total Patients" 
+            count="30" 
+            iconBgColor="bg-blue-400" 
+            icon={UsersIcon} 
+          />
+          <StatCard 
+            title="New Patients" 
+            count="20" 
+            iconBgColor="bg-yellow-400" 
+            icon={UserPlusIcon} 
+          />
+          <StatCard 
+            title="Consultations" 
+            count="$530" 
+            iconBgColor="bg-red-400" 
+            icon={ChatBubbleBottomCenterTextIcon} 
+          />
+          <StatCard
+            title="Earnings"
+            count="$530"
+            iconBgColor="bg-green-400"
+            icon={BanknotesIcon}
+          />
+        </div>
+
+        {/* Chart Box */}
+        <Chart />
+
+        <div>
+        <Actions />
+        </div> 
       </div>
-      <Actions />
-    </div>           
+                
     </>
   )
 }
