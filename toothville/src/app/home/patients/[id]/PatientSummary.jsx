@@ -3,9 +3,6 @@
 //transfer to layout
 import {useState, useEffect} from 'react'
 
-import Image from 'next/image';
-import sample from '../../../../../public/assets/dentist-2-svgrepo-com.svg'
-
 export default function PatientSummary({params}) {
     const { id }  = params
     const path = `/home/patients/${id}`
@@ -22,6 +19,7 @@ export default function PatientSummary({params}) {
     }, [])
 
     
+    const getName = (patient) => {return patient.personalInformation.firstName + " " + patient.personalInformation.lastName}
 
     if (!patient) return <div> Loading... </div>
 
@@ -29,7 +27,7 @@ export default function PatientSummary({params}) {
     <>
         <div className="flex flex-row justify-between items-center">
             <div id="info" className=' flex flex-col'>
-                <h1 className='font-bold text-3xl mb-2'>{patient.name.toUpperCase()}</h1>
+                <h1 className='font-bold text-3xl mb-2'>{getName(patient).toUpperCase()}</h1>
                 <div className = 'font-extralight'>
                     <div id="id">ID: {patient._id.slice(-4)}</div>
                     <div id="visit">Last Visit: 3 days ago</div>
@@ -37,7 +35,6 @@ export default function PatientSummary({params}) {
                 </div>
             </div>
             <div id="image" className='rounded-full border border-black h-32 w-32'>
-                
             </div>
         </div> 
         <div id="icons" className='flex justify-between py-4 mb-2'>
