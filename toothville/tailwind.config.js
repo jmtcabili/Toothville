@@ -16,6 +16,10 @@ export const theme = {
     fontFamily: {
       anekOdia: ['var(--font-anek-odia)']
     },
+    borderWidth: {
+      '50': '50px', 
+      '25': '25px'
+    }
   },
 };
 export const plugins = [];
