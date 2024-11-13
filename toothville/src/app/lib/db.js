@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import dentalChart from '../home/patients/[id]/dental-chart/page'
 const {Schema} = mongoose
 
 const MONGODB_URI = process.env.MONGODB_URI
@@ -117,6 +118,14 @@ const patientSchema = new Schema ({
     },
     concern: String, 
     dentist: String,
+    //initialize to length 32
+    dentalChart: [{
+        top: String, 
+        left: String, 
+        right:  String, 
+        mid: String,
+        bottom: String, 
+    }]
 })
 
 const notesSchema = new Schema ({
@@ -125,6 +134,9 @@ const notesSchema = new Schema ({
     procedureName: String, 
     comment: String, 
 })
+
+
+
 
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
