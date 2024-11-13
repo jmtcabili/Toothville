@@ -17,11 +17,11 @@ import Link from 'next/link'
 
 export default function PatientList() {
 
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState(null);
   const [nameSearch, setNameSearch] = useState("");
   const [dentistSearch, setDentistSearch] = useState("All");
   const [dentists, setDentists] = useState([]);
-  const [filteredPatients, setFilteredPatients] = useState([]); 
+  
 
   useEffect(() => {
       async function fetchPatientList(){
@@ -33,7 +33,9 @@ export default function PatientList() {
       fetchPatientList()
   }, [])
 
-  
+  const getDetails = (patient) =>{
+    return patient.personalInformation.firstName + " " + patient.personalInformation.lastName
+  }
 
   if (patients == null){
     return(
@@ -42,17 +44,14 @@ export default function PatientList() {
         </>
     )
   }else{
-
-    
-    const filteredPatients = patients.filter(withinSearch)
-    function withinSearch(patient){
-        if (patient.name != null){
-            return(patient.name.toLowerCase().includes(nameSearch.toLowerCase()) &&
-            (dentistSearch === "All" || patient.dentist === dentistSearch))
-        }
-    }
-    
-    
+    const filteredPatients = patients.filter(
+      (patient) => {
+        const name = getDetails(patient)
+        return (name.toLowerCase().includes(nameSearch.toLowerCase())
+        && (dentistSearch === "All" || patient.dentist === dentistSearch))
+      }
+        
+    )
     return (
     
       <>
@@ -94,7 +93,7 @@ export default function PatientList() {
               <TableCell className="font-medium">
                   <Link href = {`/home/patients/${patient._id}`}
                         className = "underline">
-                      {patient.name}
+                      {getDetails(patient)}
                   </Link>
               </TableCell>
               <TableCell>{patient.concern}</TableCell>
