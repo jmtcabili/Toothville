@@ -6,6 +6,7 @@ await dbConnect();
 
 export async function POST(request) {
 
+    /*
   const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, recordDate, concern, dentist } = await request.json(); // expects patient information
   const tempPatient = new patientModel({
     name: name,
@@ -24,8 +25,38 @@ export async function POST(request) {
 
   //save temp model to database 
   await tempPatient.save();
+  */
+    const {personalInformation, 
+           contactInformation, 
+           emergencyContacts, 
+           familyDoctor, 
+           specialists, 
+           pharmacy, 
+           identification, 
+           insurance, 
+           medicalHistory,
+           concern, 
+           dentist
+    } = await request.json()
+    
+    const tempPatient = new patientModel({
+        personalInformation: personalInformation,
+        contactInformation: contactInformation, 
+        emergencyContacts: emergencyContacts, 
+        familyDoctor: familyDoctor, 
+        specialists: specialists, 
+        pharmacy: pharmacy, 
+        identification: identification, 
+        insurance: insurance, 
+        medicalHistory: medicalHistory,
+        concern: concern, 
+        dentist: dentist
+    });
+    
+    await tempPatient.save()
+   
 
-  return NextResponse.json({message: "created"})
+  return NextResponse.json({message: "created", user: tempPatient})
   
 }
 
