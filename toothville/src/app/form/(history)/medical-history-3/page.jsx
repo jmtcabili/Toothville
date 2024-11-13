@@ -36,68 +36,70 @@ export default function MedicalConditionsForm() {
     }, []);
 
     const onSubmit = async (data) => {
+        const formData = sessionStorage.getItem('formData')
+        const parsedData = JSON.parse(formData);
         const patientData = {
             personalInformation: {
-                title: sessionStorage.getItem('title'),
-                firstName: sessionStorage.getItem('firstName'),
-                middleInitial: sessionStorage.getItem('middleInitial'),
-                lastName: sessionStorage.getItem('lastName'),
-                nickname: sessionStorage.getItem('nickname'),
-                dob: new Date(sessionStorage.getItem('dob')),
-                address: sessionStorage.getItem('address'),
-                suite: sessionStorage.getItem('suite'),
-                city: sessionStorage.getItem('city'),
-                province: sessionStorage.getItem('province'),
-                postalCode: sessionStorage.getItem('postalCode'),
+                title: parsedData.title,
+                firstName: parsedData.firstName,
+                middleInitial: parsedData.middleInitial,
+                lastName: parsedData.lastName,
+                nickname: parsedData.nickname,
+                dob: new Date(parsedData.dob),
+                address: parsedData.address,
+                suite: parsedData.suite,
+                city: parsedData.city,
+                province: parsedData.province,
+                postalCode: parsedData.postalCode,
             },
             contactInformation: {
-                homePhone: sessionStorage.getItem('homePhone'),
-                cellularPhone: sessionStorage.getItem('cellularPhone'),
-                businessPhone: sessionStorage.getItem('businessPhone'),
-                email: sessionStorage.getItem('email'),
-                preferredContact: sessionStorage.getItem('preferredContact'),
-                occupation: sessionStorage.getItem('occupation'),
-                guardianName: sessionStorage.getItem('guardianName'),
-                guardianPhone: sessionStorage.getItem('guardianPhone'),
+                homePhone: parsedData.homePhone,
+                cellularPhone: parsedData.cellularPhone,
+                businessPhone: parsedData.businessPhone,
+                email: parsedData.email,
+                preferredContact: parsedData.preferredContact,
+                occupation: parsedData.occupation,
+                guardianName: parsedData.guardianName,
+                guardianPhone: parsedData.guardianPhone,
             },
             emergencyContacts: JSON.parse(sessionStorage.getItem('emergencyContacts')) || [],
             familyDoctor: {
-                name: sessionStorage.getItem('familyDoctorName'),
-                phone: sessionStorage.getItem('familyDoctorPhone'),
-                address: sessionStorage.getItem('familyDoctorAddress'),
+                name: parsedData.familyDoctor,
+                phone: parsedData.familyDoctorPhone,
+                address: parsedData.familyDoctorAddress,
             },
             specialist: {
-                name: sessionStorage.getItem('specialistName'),
-                phone: sessionStorage.getItem('specialistPhone'),
-                address: sessionStorage.getItem('specialistAddress'),
+                name: parsedData.specialist,
+                phone: parsedData.specialistPhone,
+                address: parsedData.specialistAddress,
             },
             pharmacy: {
-                name: sessionStorage.getItem('pharmacyName'),
-                number: sessionStorage.getItem('pharmacyNumber'),
+                name: parsedData.pharmacyName,
+                number: parsedData.pharmacyNumber,
             },
             identification: {
-                driversLicenseNumber: sessionStorage.getItem('driversLicenseNumber'),
-                ohipNumber: sessionStorage.getItem('ohipNumber'),
+                driversLicenseNumber: parsedData.driversLicenseNumber,
+                ohipNumber: parsedData.ohipNumber,
             },
             insurance: {
-                dentalInsurance: sessionStorage.getItem('dentalInsurance') === 'true', // Convert to boolean
-                employer: sessionStorage.getItem('employer'),
-                primaryInsurancePolicy: sessionStorage.getItem('primaryInsurancePolicy'),
-                secondaryInsurancePolicy: sessionStorage.getItem('secondaryInsurancePolicy'),
+                dentalInsurance: parsedData.dentalInsurance === true, // Convert to boolean
+                employer: parsedData.employer,
+                primaryInsurancePolicy: parsedData.primaryInsurancePolicy,
+                secondaryInsurancePolicy: parsedData.secondaryInsurancePolicy,
             },
-            referralSource: sessionStorage.getItem('referralSource'),
+            referralSource: parsedData.referralSource,
             medicalHistory: {
-                treatedMedicalCondition: sessionStorage.getItem('treatedMedicalCondition'),
-                treatedMedicalReason: sessionStorage.getItem('treatedMedicalReason'),
-                lastMedicalCheckup: new Date(sessionStorage.getItem('lastMedicalCheckup')),
-                healthChange: sessionStorage.getItem('healthChange'),
-                healthChangeReason: sessionStorage.getItem('healthChangeReason'),
-                medications: sessionStorage.getItem('medications'),
-                medicationsList: sessionStorage.getItem('medicationsList'),
+                treatedMedicalCondition: parsedData.treatedMedicalCondition,
+                treatedMedicalReason: parsedData.treatedMedicalReason,
+                lastMedicalCheckup: new Date(parsedData.lastMedicalCheckup),
+                healthChange: parsedData.healthChange,
+                healthChangeReason: parsedData.healthChangeReason,
+                medications: parsedData.medications,
+                medicationsList: parsedData.medicationsList,
                 allergies: {
-                    medications: sessionStorage.getItem('allergiesMedications'),
-                    latexRubberMetals: sessionStorage.getItem('allergiesLatexRubberMetals'),
-                    others: sessionStorage.getItem('allergiesOthers'),
+                    medications: parsedData.medicationAllergies,
+                    latexRubberMetals: parsedData.latexAllergies,
+                    others: parsedData.otherAllergies,
                 },
                 adverseReaction: data.adverseReaction,
                 reactionExplanation: data.reactionExplanation,
@@ -108,6 +110,8 @@ export default function MedicalConditionsForm() {
         };
 
         try {
+            console.log("Patient data (front): ", patientData);
+            
             const response = await fetch('/api/patient-record', {
                 method: 'POST',
                 headers: {
@@ -124,7 +128,7 @@ export default function MedicalConditionsForm() {
             const result = await response.json();
             if (result.message === "created") {
                 alert("Patient data saved successfully!");
-                router.push('/home/patients');
+                router.push('/home');
             }
         } catch (error) {
             console.error('Error submitting form:', error);
