@@ -35,105 +35,23 @@ export default function MedicalConditionsForm() {
         setIsMounted(true);
     }, []);
 
-    const onSubmit = async (data) => {
-        const formData = sessionStorage.getItem('formData')
-        const parsedData = JSON.parse(formData);
-        const patientData = {
-            personalInformation: {
-                title: parsedData.title,
-                firstName: parsedData.firstName,
-                middleInitial: parsedData.middleInitial,
-                lastName: parsedData.lastName,
-                nickname: parsedData.nickname,
-                dob: new Date(parsedData.dob),
-                address: parsedData.address,
-                suite: parsedData.suite,
-                city: parsedData.city,
-                province: parsedData.province,
-                postalCode: parsedData.postalCode,
-            },
-            contactInformation: {
-                homePhone: parsedData.homePhone,
-                cellularPhone: parsedData.cellularPhone,
-                businessPhone: parsedData.businessPhone,
-                email: parsedData.email,
-                preferredContact: parsedData.preferredContact,
-                occupation: parsedData.occupation,
-                guardianName: parsedData.guardianName,
-                guardianPhone: parsedData.guardianPhone,
-            },
-            emergencyContacts: JSON.parse(sessionStorage.getItem('emergencyContacts')) || [],
-            familyDoctor: {
-                name: parsedData.familyDoctor,
-                phone: parsedData.familyDoctorPhone,
-                address: parsedData.familyDoctorAddress,
-            },
-            specialist: {
-                name: parsedData.specialist,
-                phone: parsedData.specialistPhone,
-                address: parsedData.specialistAddress,
-            },
-            pharmacy: {
-                name: parsedData.pharmacyName,
-                number: parsedData.pharmacyNumber,
-            },
-            identification: {
-                driversLicenseNumber: parsedData.driversLicenseNumber,
-                ohipNumber: parsedData.ohipNumber,
-            },
-            insurance: {
-                dentalInsurance: parsedData.dentalInsurance === true, // Convert to boolean
-                employer: parsedData.employer,
-                primaryInsurancePolicy: parsedData.primaryInsurancePolicy,
-                secondaryInsurancePolicy: parsedData.secondaryInsurancePolicy,
-            },
-            referralSource: parsedData.referralSource,
-            medicalHistory: {
-                treatedMedicalCondition: parsedData.treatedMedicalCondition,
-                treatedMedicalReason: parsedData.treatedMedicalReason,
-                lastMedicalCheckup: new Date(parsedData.lastMedicalCheckup),
-                healthChange: parsedData.healthChange,
-                healthChangeReason: parsedData.healthChangeReason,
-                medications: parsedData.medications,
-                medicationsList: parsedData.medicationsList,
-                allergies: {
-                    medications: parsedData.medicationAllergies,
-                    latexRubberMetals: parsedData.latexAllergies,
-                    others: parsedData.otherAllergies,
-                },
-                adverseReaction: data.adverseReaction,
-                reactionExplanation: data.reactionExplanation,
-                asthma: data.asthma,
-                heartIssues: data.heartIssues,
-                heartSurgery: data.heartSurgery,
-            },
-        };
-
-        try {
-            console.log("Patient data (front): ", patientData);
-            
-            const response = await fetch('/api/patient-record', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(patientData),
-            });
-    
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to save patient data');
-            }
-    
-            const result = await response.json();
-            if (result.message === "created") {
-                alert("Patient data saved successfully!");
-                router.push('/home');
-            }
-        } catch (error) {
-            console.error('Error submitting form:', error);
-            alert(`Error saving patient data: ${error.message}`);
+    // Load form data from sessionStorage on mount
+    useEffect(() => {
+        const savedData = sessionStorage.getItem("formData");
+        if (savedData) {
+            form.reset(JSON.parse(savedData));
         }
+        setIsMounted(true);
+    }, []);
+
+    // Save form data to sessionStorage on change
+    const onInputChange = () => {
+        sessionStorage.setItem("formData", JSON.stringify(form.getValues()));
+    };
+
+    const onSubmit = (data) => {
+        console.log("Form data:", data);
+        router.push("/form/concern"); // Navigate to the next page
     };
 
     if (!isMounted) {
@@ -151,7 +69,7 @@ export default function MedicalConditionsForm() {
             </header>
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>Medical History</h2>
-                <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} onChange={onInputChange} className={styles.form}>
                     <label className={styles.label}>
                         Have you ever had a peculiar or adverse reaction to any medications or injections?
                     </label>
@@ -275,7 +193,7 @@ export default function MedicalConditionsForm() {
                     </div>
 
                     <button type="submit" className={styles.submitButton}>
-                        Submit
+                        Next →
                     </button>
                 </form>
             </div>
