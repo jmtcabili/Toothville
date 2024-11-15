@@ -66,6 +66,7 @@ const Page = () => {
               required
             />
           </div>
+         
           <div className={styles.inputGroup}>
             <label htmlFor="password">Password</label>
             <input

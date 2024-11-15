@@ -179,6 +179,7 @@ export default function Dashboard() {
         <Chart />
 
         <div>
+        
         <Actions />
         </div> 
       </div>
