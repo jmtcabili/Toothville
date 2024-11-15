@@ -19,7 +19,7 @@ export async function POST(request) {
     address: address,
     occupation: occupation,
     recordDate: recordDate,
-    concern: concern, 
+    concern: concern,
     dentist: dentist
   });
 
@@ -35,7 +35,8 @@ export async function POST(request) {
           identification, 
           insurance, 
           medicalHistory,
-          concern, 
+          concern,
+          signatures,
           dentist
   } = await request.json()
 
@@ -58,7 +59,8 @@ export async function POST(request) {
       identification: identification, 
       insurance: insurance, 
       medicalHistory: medicalHistory,
-      concern: concern, 
+      concern: concern,
+      signatures,
       dentist: dentist,
       dentalChart: dentalChart
   });
