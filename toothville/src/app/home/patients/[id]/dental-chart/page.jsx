@@ -61,13 +61,33 @@ export default function dentalChart({params}) {
         fetchChart()
     }, [])
 
-    const handleStatusChange = (index, area) => e => {
+    const handleStatusChange = (index, area) => async(e) => {
         //e.target.val -> new 
         console.log(e.target.value);
         let newChart = [...chart]
         newChart[index][area] = e.target.value
         
         setChart(newChart)
+        try{
+            let response = await fetch (`http://localhost:3000/api/dental-chart?_id=${id}`, {
+                method: "PUT",
+                headers: {'Content-Type' : 'application/json'},
+                body: JSON.stringify(
+                    {
+                        toothIndex: index, 
+                        updatedStatus: newChart[index]
+                    }
+                )
+            })
+            const result = await response.json()
+            if (response.ok){
+                console.log("Tooth updated");
+            }else{
+                console.log("error: ", result);
+            }
+        }catch(error){
+            console.error("error: ", error)
+        }
     }
 
     function Select({ area, toothIndex }) {
@@ -102,7 +122,7 @@ export default function dentalChart({params}) {
         const bottomClass = isLarge ? style.largeBottom : style.trapezoidBottom;
         const leftClass = isLarge ? style.largeLeft : style.trapezoidLeft;
         const rightClass = isLarge ? style.largeRight : style.trapezoidRight;
-        console.log(tooth);
+        //console.log(tooth);
         
         return (
             <div className={`${containerSize} border-2 rounded mb-2`}>
