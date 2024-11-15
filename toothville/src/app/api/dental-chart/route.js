@@ -16,18 +16,20 @@ export async function GET(request){
 
 export async function PUT(request){
 
+    //refactor in the future to use cached result of getpatient 
     //get id of user 
     const { searchParams } = new URL(request.url)
     const patientID = searchParams.get('_id')
 
-    //find patient record
-    const patient = await patientModel.findOne({_id: patientID})
-
-    //get updated chart
-    const updatedChart = await request.json();
+    //get updated tooth statuses
+    const {toothIndex, updatedStatus} = await request.json()
 
     //set updated chart
-    patient.dentalChart = updatedChart; 
+    const filter = {_id: patientID}
+    const update = updatedStatus
+    const patient = await patientModel.findOne(filter);
+
+    patient.dentalChart[toothIndex] = updatedStatus;
 
     patient.save();
 
