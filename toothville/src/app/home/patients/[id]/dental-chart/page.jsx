@@ -13,6 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
+import { Description } from '@radix-ui/react-dialog';
   
   const statuses = [
     "Normal",
@@ -69,23 +70,28 @@ export default function dentalChart({params}) {
         setChart(newChart)
     }
 
-    function Select({area, toothIndex}){
-        return(
-        <>
-            <span>
-            {area}: 
-            <select name="top" id="top" className = "max-w-[200px]" value = {chart[toothIndex][area]} onChange = {handleStatusChange(toothIndex, area)}>
-                {statuses.map((status, index) => {
-                    return (
-                        <option key = {index} value = {status}>
-                            {status.replace(/_/g, " ")}
-                        </option>
-                    )
-                })}
-            </select>
-            </span>
-        </>
-        )
+    function Select({ area, toothIndex }) {
+        return (
+            <div className="flex items-center space-x-2 mb-1">
+                <label className="w-16 font-medium">
+                    {area}:
+                </label>
+                <select 
+                    name={`select${area}-${toothIndex}`} 
+                    className="max-w-[200px] border-gray-300 rounded-md p-1"
+                    value={chart[toothIndex][area]} 
+                    onChange={handleStatusChange(toothIndex, area)}
+                >
+                    {statuses.map((status, index) => {
+                        return (
+                            <option key={index} value={status}>
+                                {status.replace(/_/g, " ")}
+                            </option>
+                        );
+                    })}
+                </select>
+            </div>
+        );
     }
 
     function Tooth({size, tooth}) {
@@ -96,22 +102,17 @@ export default function dentalChart({params}) {
         const bottomClass = isLarge ? style.largeBottom : style.trapezoidBottom;
         const leftClass = isLarge ? style.largeLeft : style.trapezoidLeft;
         const rightClass = isLarge ? style.largeRight : style.trapezoidRight;
-        const topColor = tooth.top
-        const leftColor = statuses[tooth.left]
-        const midColor = statuses[tooth.mid]
-        const rightColor = statuses[tooth.right]
-        const bottomColor = statuses[tooth.bottom]
-        
+        console.log(tooth);
         
         return (
             <div className={`${containerSize} border-2 rounded mb-2`}>
-                <div className={`${topClass} border-${topColor}`}></div>
+                <div className={`${topClass} border-${tooth.top}`}></div>
                 <div id="mid" className={`${isLarge ? 'h-[90px]' : 'h-[24px]'} flex items-center justify-between`}>
-                    <div className={`${leftClass} ${leftColor} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
-                    <div className={`${isLarge ? 'h-[60px] w-[60px]' : 'h-[16px] w-[16px]'} border rounded bg-gray-500`}></div>
-                    <div className={`${rightClass} ${rightColor} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
+                    <div className={`${leftClass} border-${tooth.left} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
+                    <div className={`${isLarge ? 'h-[60px] w-[60px]' : 'h-[16px] w-[16px]'} border-2 rounded bg-${tooth.mid}`}></div>
+                    <div className={`${rightClass} border-${tooth.right} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
                 </div>
-                <div className={`${bottomClass} ${bottomColor}`}></div>
+                <div className={`${bottomClass} border-${tooth.bottom}`}></div>
             </div>
         );
     }
@@ -120,6 +121,7 @@ export default function dentalChart({params}) {
     <>
         <div className="flex flex-wrap flex-row gap-1">
             {chart.length > 0 ? (chart.map((tooth, index) => {
+                
                 return (
                     <div key = {index}>
                         <Dialog>
@@ -130,18 +132,22 @@ export default function dentalChart({params}) {
                                 </div>
                             </DialogTrigger>
                             <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                                <DialogDescription></DialogDescription>
                                 <DialogHeader>
-                                <DialogTitle>Tooth {index +1}</DialogTitle>
-                                    <div className="w-full flex flex-col items-center">
-                                        <Tooth size = {"lg"} tooth = {tooth}/>
-                                        <Select area = {"top"} toothIndex={index}/>
-                                        <Select area = {"left"} toothIndex={index}/>                                       
-                                        <Select area = {"mid"} toothIndex={index}/>    
-                                        <Select area = {"right"} toothIndex={index}/>    
-                                        <Select area = {"bottom"} toothIndex={index}/>    
+                                <DialogTitle className = "center">Tooth {index +1}</DialogTitle>
+                                    <div className="w-full flex flex-col gap-1 items-center">
+                                        <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                        <div>
+                                            <Select area = {"top"} toothIndex={index}/>
+                                            <Select area = {"left"} toothIndex={index}/>                                       
+                                            <Select area = {"mid"} toothIndex={index}/>    
+                                            <Select area = {"right"} toothIndex={index}/>    
+                                            <Select area = {"bottom"} toothIndex={index}/> 
+                                        </div>
+                                         
                                     </div>
                                 </DialogHeader>
-                        </DialogContent>
+                            </DialogContent>
                         </Dialog>
                     </div>
                 )
@@ -151,3 +157,51 @@ export default function dentalChart({params}) {
     </>
     )
 }
+
+//Compile tailwind classes : 
+// border-Normal
+// border-Missing
+// border-Decayed
+// border-Impacted
+// border-Supernumerary
+// border-Root_Fragment
+// border-Unerupted
+// border-Other
+// border-Extracted_due_to_Carries
+// border-Extracted_due_to_Other_Causes
+// border-Amalgam_Filling
+// border-Composite_Filling
+// border-Porcelain_Jacket_Crown
+// border-Acrylic_Jacket_Crown
+// border-Abutment
+// border-Pontic
+// border-Inlay
+// border-Onlay
+// border-Implant
+// border-Sealants
+// border-Removable
+// border-Fixed_Bridge
+// border-Veneer
+// bg-Normal
+// bg-Missing
+// bg-Decayed
+// bg-Impacted
+// bg-Supernumerary
+// bg-Root_Fragment
+// bg-Unerupted
+// bg-Other
+// bg-Extracted_due_to_Carries
+// bg-Extracted_due_to_Other_Causes
+// bg-Amalgam_Filling
+// bg-Composite_Filling
+// bg-Porcelain_Jacket_Crown
+// bg-Acrylic_Jacket_Crown
+// bg-Abutment
+// bg-Pontic
+// bg-Inlay
+// bg-Onlay
+// bg-Implant
+// bg-Sealants
+// bg-Removable
+// bg-Fixed_Bridge
+// bg-Veneer
