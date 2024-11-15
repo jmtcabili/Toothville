@@ -26,35 +26,45 @@ export async function POST(request) {
   //save temp model to database 
   await tempPatient.save();
   */
-    const {personalInformation, 
-           contactInformation, 
-           emergencyContacts, 
-           familyDoctor, 
-           specialists, 
-           pharmacy, 
-           identification, 
-           insurance, 
-           medicalHistory,
-           concern, 
-           dentist
-    } = await request.json()
-    
-    const tempPatient = new patientModel({
-        personalInformation: personalInformation,
-        contactInformation: contactInformation, 
-        emergencyContacts: emergencyContacts, 
-        familyDoctor: familyDoctor, 
-        specialists: specialists, 
-        pharmacy: pharmacy, 
-        identification: identification, 
-        insurance: insurance, 
-        medicalHistory: medicalHistory,
-        concern: concern, 
-        dentist: dentist
-    });
-    
-    await tempPatient.save()
-   
+  const {personalInformation, 
+          contactInformation, 
+          emergencyContacts, 
+          familyDoctor, 
+          specialists, 
+          pharmacy, 
+          identification, 
+          insurance, 
+          medicalHistory,
+          concern, 
+          dentist
+  } = await request.json()
+
+  const dentalChart = Array.from({ length: 32 }, () => ({
+    top: "Normal",
+    left: "Normal",
+    right: "Normal",
+    mid: "Normal",
+    bottom: "Normal"
+  }));
+  
+  
+  const tempPatient = new patientModel({
+      personalInformation: personalInformation,
+      contactInformation: contactInformation, 
+      emergencyContacts: emergencyContacts, 
+      familyDoctor: familyDoctor, 
+      specialists: specialists, 
+      pharmacy: pharmacy, 
+      identification: identification, 
+      insurance: insurance, 
+      medicalHistory: medicalHistory,
+      concern: concern, 
+      dentist: dentist,
+      dentalChart: dentalChart
+  });
+  
+  await tempPatient.save()
+  
 
   return NextResponse.json({message: "created", user: tempPatient})
   

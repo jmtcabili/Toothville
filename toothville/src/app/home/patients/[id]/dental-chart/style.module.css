@@ -1,0 +1,45 @@
+.trapezoidTop{
+    border-top-width: 8px;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent; 
+}
+
+.trapezoidBottom{
+    border-bottom-width: 8px;
+	border-left: 8px solid transparent;
+	border-right: 8px solid transparent; 
+}
+
+.trapezoidLeft{
+    border-left-width: 8px;
+	border-top: 6px  solid transparent;
+	border-bottom: 6px solid transparent; 
+}
+.trapezoidRight{
+    border-right-width: 8px;
+	border-top: 6px solid transparent;
+	border-bottom: 6px solid transparent; 
+}
+
+.largeTop{
+	border-top-width: 30px;
+	border-left: 30px solid transparent;
+	border-right: 30px solid transparent; 
+}
+.largeBottom{
+    border-bottom-width: 30px;
+	border-left: 30px solid transparent;
+	border-right: 30px solid transparent; 
+}
+
+.largeLeft{
+    border-left-width: 30px;
+	border-top: 25px  solid transparent;
+	border-bottom: 25px solid transparent; 
+}
+.largeRight{
+    border-right-width: 30px;
+	border-top: 25px solid transparent;
+	border-bottom: 25px solid transparent; 
+}
+
