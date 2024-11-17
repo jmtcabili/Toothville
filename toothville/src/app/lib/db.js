@@ -119,13 +119,19 @@ const patientSchema = new Schema ({
     concern: String, 
     dentist: String,
     //initialize to length 32
-    dentalChart: [{
-        top: String, 
-        left: String, 
-        right:  String, 
-        mid: String,
-        bottom: String, 
-    }]
+
+    dentalChart: [
+        {
+            top: {type: String},
+            left: {type: String}, 
+            right:  {type: String}, 
+            mid: {type: String},
+            bottom: {type: String}, 
+            type: {type: String},
+            area: {type: String},
+            toothNum: {type: Number}
+        },
+    ]
 })
 
 const notesSchema = new Schema ({
