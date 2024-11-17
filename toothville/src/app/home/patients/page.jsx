@@ -55,7 +55,7 @@ export default function PatientList() {
     return (
     
       <>
-        <div className="px-4 mb-2 flex flex-col gap-3 md:flex-row">
+        <div className="px-4 py-4 flex flex-col gap-3 md:flex-row">
           <div id="name" className = "flex flex-row items-center border rounded border-1 bg-gray-200 max-w-max">
             <div className="w-[75px] px-1">Name: </div>
             <input 
@@ -71,7 +71,7 @@ export default function PatientList() {
               onChange={(e) => {setDentistSearch(e.target.value)}}
               className='py-1 px-2 min-w-[70px] rounded-r focus:outline-none focus:ring-2 focus: ring-blue-300'>
               {dentists.map((dentist, index) =>{
-                return (<option value = {dentist}>{dentist}</option>)
+                return (<option key = {index} value = {dentist}>{dentist}</option>)
               })}
             </select>
           </div>
@@ -88,23 +88,25 @@ export default function PatientList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredPatients.map((patient, index) => (
-            <TableRow key={index}>
-              <TableCell className="font-medium">
-                  <Link href = {`/home/patients/${patient._id}`}
-                        className = "underline">
-                      {getDetails(patient)}
-                  </Link>
-              </TableCell>
-              <TableCell>{patient.concern}</TableCell>
-              <TableCell>{patient._id.slice(-4)}</TableCell>
-              <TableCell>
-                <div className="flex items-center gap-2">
-                  {patient.dentist}
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
+          {filteredPatients.map((patient, index) => {
+            return(
+              <TableRow key={index}>
+                <TableCell className="font-medium">
+                    <Link href = {`/home/patients/${patient._id}`}
+                          className = "underline">
+                        {getDetails(patient)}
+                    </Link>
+                </TableCell>
+                <TableCell>{patient.concern}</TableCell>
+                <TableCell>{patient._id.slice(-4)}</TableCell>
+                <TableCell>
+                  <div className="flex items-center gap-2">
+                    {patient.dentist}
+                  </div>
+                </TableCell>
+              </TableRow>
+            )
+          })}
         </TableBody>
         <TableFooter>
           <TableRow>

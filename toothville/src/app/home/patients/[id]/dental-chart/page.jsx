@@ -2,8 +2,8 @@
 
 
 import {useState, useEffect} from 'react'
-import Image from 'next/image';
-import style from './style.module.css'
+import Tooth from "./Tooth"
+import FilterButton from "./FilterButton"
 
 import {
     Dialog,
@@ -13,7 +13,7 @@ import {
     DialogTitle,
     DialogTrigger,
   } from "@/components/ui/dialog"
-import { Description } from '@radix-ui/react-dialog';
+import { Filter } from 'lucide-react'
   
   const statuses = [
     "Normal",
@@ -41,22 +41,20 @@ import { Description } from '@radix-ui/react-dialog';
     "Veneer"
 ];
 
-function handleClick(){
-    console.log("clicked");
-    
-}
-
-
 export default function dentalChart({params}) {
 
     const { id } = params
     const [chart, setChart] = useState([]); 
-    
+    const [filteredTeeth, setFilteredTeeth] = useState([])
+    const [selectedFilters, setSelectedFilters] = useState([])
+
+
     useEffect(() => {
         async function fetchChart(){
             let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
             let patient = await response.json()   
             setChart(patient.dentalChart)
+            setFilteredTeeth(patient.dentalChart)
         }
         fetchChart()
     }, [])
@@ -113,67 +111,54 @@ export default function dentalChart({params}) {
             </div>
         );
     }
-
-    function Tooth({size, tooth}) {
-        
-        const isLarge = size === 'lg';
-        const containerSize = isLarge ? 'h-[154px] w-[150px]' : 'h-[40px] w-[40px]';
-        const topClass = isLarge ? style.largeTop : style.trapezoidTop;
-        const bottomClass = isLarge ? style.largeBottom : style.trapezoidBottom;
-        const leftClass = isLarge ? style.largeLeft : style.trapezoidLeft;
-        const rightClass = isLarge ? style.largeRight : style.trapezoidRight;
-        //console.log(tooth);
-        
-        return (
-            <div className={`${containerSize} border-2 rounded mb-2`}>
-                <div className={`${topClass} border-${tooth.top}`}></div>
-                <div id="mid" className={`${isLarge ? 'h-[90px]' : 'h-[24px]'} flex items-center justify-between`}>
-                    <div className={`${leftClass} border-${tooth.left} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
-                    <div className={`${isLarge ? 'h-[60px] w-[60px]' : 'h-[16px] w-[16px]'} border-2 rounded bg-${tooth.mid}`}></div>
-                    <div className={`${rightClass} border-${tooth.right} ${isLarge ? 'h-[120px]' : 'h-[24px]'}`}></div>
-                </div>
-                <div className={`${bottomClass} border-${tooth.bottom}`}></div>
-            </div>
-        );
-    }
-
     return (
     <>
-        <div className="flex flex-wrap flex-row gap-1">
-            {chart.length > 0 ? (chart.map((tooth, index) => {
-                
-                return (
-                    <div key = {index}>
-                        <Dialog>
-                            <DialogTrigger>
-                                <div className = "flex flex-col items-center" >
-                                    {index+1}
-                                    <Tooth size = {"sm"} tooth = {tooth}/>
-                                </div>
-                            </DialogTrigger>
-                            <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
-                                <DialogDescription></DialogDescription>
-                                <DialogHeader>
-                                <DialogTitle className = "center">Tooth {index +1}</DialogTitle>
-                                    <div className="w-full flex flex-col gap-1 items-center">
-                                        <div><Tooth size = {"lg"} tooth = {tooth}/></div>
-                                        <div>
-                                            <Select area = {"top"} toothIndex={index}/>
-                                            <Select area = {"left"} toothIndex={index}/>                                       
-                                            <Select area = {"mid"} toothIndex={index}/>    
-                                            <Select area = {"right"} toothIndex={index}/>    
-                                            <Select area = {"bottom"} toothIndex={index}/> 
-                                        </div>
-                                         
+        {chart.length > 0 ? 
+            <>
+            <div className="flex flex-row items-center justify-between mb-3">
+                <h2 className='font-bold'>Dental Chart</h2>
+                <div id="filter"><FilterButton selectedFilters={selectedFilters} 
+                                            setSelectedFilters={setSelectedFilters}
+                                            chart = {chart}
+                                            setFilteredTeeth = {setFilteredTeeth}/>
+                </div>
+            </div>
+            <div className="flex flex-row flex-wrap justify-end gap-1">
+            {(filteredTeeth.map((tooth, index) => {
+                return(
+                <div key = {index}>
+                    <Dialog>
+                        <DialogTrigger>
+                            <div className = "flex flex-col items-center" >
+                                {tooth.toothNum}
+                                <Tooth size = {"sm"} tooth = {tooth}/>
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                            <DialogDescription></DialogDescription>
+                            <DialogHeader>
+                            <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
+                                <div className="w-full flex flex-col gap-1 items-center">
+                                    <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                    <div>
+                                        <Select area = {"top"} toothIndex={index}/>
+                                        <Select area = {"left"} toothIndex={index}/>                                       
+                                        <Select area = {"mid"} toothIndex={index}/>    
+                                        <Select area = {"right"} toothIndex={index}/>    
+                                        <Select area = {"bottom"} toothIndex={index}/> 
                                     </div>
-                                </DialogHeader>
-                            </DialogContent>
-                        </Dialog>
-                    </div>
+                                        
+                                </div>
+                            </DialogHeader>
+                        </DialogContent>
+                    </Dialog>
+                </div>
                 )
-            })) : (<>Loading chart...</>)}
-        </div>
-        
+            }))}
+            </div>
+            </>
+        : 
+        (<>Loading chart...</>)}
     </>
     )
 }
