@@ -17,6 +17,8 @@ const filterOptions = [
   { id: "Lower_Left", label: "Lower Left" },
 ]
 
+
+
 export default function FilterButton({selectedFilters, setSelectedFilters, chart, setFilteredTeeth}) {
     const handleFilterChange = (filterId) => {
         setSelectedFilters((prev) =>
@@ -43,7 +45,7 @@ export default function FilterButton({selectedFilters, setSelectedFilters, chart
       filterTeeth()
     },[selectedFilters])
     
-        
+    
     
     return (
       <Popover className = "!bg-white">
