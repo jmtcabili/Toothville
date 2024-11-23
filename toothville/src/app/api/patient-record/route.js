@@ -6,27 +6,6 @@ await dbConnect();
 
 export async function POST(request) {
 
-
-		/*
-	const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, recordDate, concern, dentist } = await request.json(); // expects patient information
-	const tempPatient = new patientModel({
-		name: name,
-		age: age,
-		birthday: birthday,
-		sex: sex,
-		mobile: mobile,
-		email: email,
-		civilStat: civilStat,
-		address: address,
-		occupation: occupation,
-		recordDate: recordDate,
-		concern: concern,
-		dentist: dentist
-	});
-
-	//save temp model to database 
-	await tempPatient.save();
-	*/
 	const {personalInformation, 
 					contactInformation, 
 					emergencyContacts, 
@@ -41,24 +20,24 @@ export async function POST(request) {
 					dentist
 	} = await request.json()
 
-	let dentalChart = []
+	let dentalChart = {
+        Upper_Right: [], 
+        Upper_Left: [],
+        Lower_Right: [],
+        Lower_Left: []
+    }
+
 	const end = false; 
-	const areas = ["Upper Right", "Upper Left", "Lower Right", "Lower Left"]
+	const areas = ["Upper Right", "Upper Left", "Lower Left", "Lower Right"]
 	let areaIdx = 0;
-	let toothIdx = 0; 
+    let toothIdx = 0;
 
-
-	for (i = 0; i = areas.length; i++){
-		let permNum = i + 5; 
-		
-	}
-	//initializer upper right
-	
-	for (let i = 5; i > 0; i=-4){
+	//initialize upper right	
+	for (let i = 5; i > 0; i-=4){
 		var numTeeth = (i == 5) ? 5 : 8
 		var type = (i == 5) ? "Temporary" : "Permanent"
-		for (let j = 1; j <= numTeeth; j++) {
-			dentalChart[toothIdx] = {
+		for (let j = numTeeth; j >= 1; j--) {
+			dentalChart.Upper_Right[toothIdx] = {
 				top: "Normal",
 				left: "Normal",
 				right: "Normal",
@@ -71,25 +50,66 @@ export async function POST(request) {
 			toothIdx++;
 		}
 	}
-		
-	for (let i = 1; i <= 8; i++){
-		var num = (i >= 5) ? 5 : 8
-		var type = (i >= 5) ? "Temporary" : "Permanent"
-		for (let j = 1; j <= num; j++) {
-			dentalChart[toothIdx] = {
+
+    //initialize upper left
+    toothIdx = 0;
+    for (let i = 6; i > 0; i-=4){
+		var numTeeth = (i == 6) ? 5 : 8
+		var type = (i == 6) ? "Temporary" : "Permanent"
+		for (let j = 1; j <= numTeeth; j++) {
+			dentalChart.Upper_Left[toothIdx] = {
 				top: "Normal",
 				left: "Normal",
 				right: "Normal",
 				mid: "Normal",
 				bottom: "Normal",
 				type: type, 
-				area: areas[areaIdx],
+				area: "Upper Left",
 				toothNum: i*10 + j
 			}
 			toothIdx++;
 		}
-		areaIdx = (areaIdx == 3) ? 0 : areaIdx+=1
 	}
+    //initializer lower right 
+    toothIdx = 0;
+    for (let i = 4; i <= 8; i+=4){
+		var numTeeth = (i ==8) ? 5 : 8
+		var type = (i == 8) ? "Temporary" : "Permanent"
+		for (let j = numTeeth; j >= 1; j--) {
+			dentalChart.Lower_Right[toothIdx] = {
+				top: "Normal",
+				left: "Normal",
+				right: "Normal",
+				mid: "Normal",
+				bottom: "Normal",
+				type: type, 
+				area: "Lower Right",
+				toothNum: i*10 + j
+			}
+			toothIdx++;
+		}
+	}
+
+    //initializer lower left 
+    toothIdx = 0;
+    for (let i = 3; i <= 7; i+=4){
+		var numTeeth = (i ==7) ? 5 : 8
+		var type = (i == 7) ? "Temporary" : "Permanent"
+		for (let j = 1; j <= numTeeth; j++) {
+			dentalChart.Lower_Left[toothIdx] = {
+				top: "Normal",
+				left: "Normal",
+				right: "Normal",
+				mid: "Normal",
+				bottom: "Normal",
+				type: type, 
+				area: "Lower Left",
+				toothNum: i*10 + j
+			}
+			toothIdx++;
+		}
+	}
+    
 	
 	const tempPatient = new patientModel({
 			personalInformation: personalInformation,
