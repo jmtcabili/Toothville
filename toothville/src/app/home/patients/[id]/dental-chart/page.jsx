@@ -127,43 +127,99 @@ export default function dentalChart({params}) {
     }
 
     function TeethDisplay({ area }) {
-        //area -> string         
+        //area -> string
+        let row1, row2 = []
+        let justify = "justify-end"
+        if (area.split("_")[0]==="Upper"){
+            row1 = chart[area].slice(0, 5)
+            row2 = chart[area].slice(5)
+        }else{
+            row1 = chart[area].slice(0, 8)
+            row2 = chart[area].slice(8)
+        }
+        if (area.split("_")[1]==="Left"){
+            justify = "justify-start"
+        }
         return(
             <>
-            {chart[area].map((tooth, index) => {
-                return(
-                <div key = {index}>
-                    <Dialog
-                        open={toothDialogNum === tooth.toothNum}
-                        onOpenChange={(open) => setToothDialogNum(open ? tooth.toothNum : null)}
-                        >
-                        <DialogTrigger asChild>
-                            <div className = "flex flex-col items-center" >
-                                {tooth.toothNum}
-                                <Tooth size = {"sm"} tooth = {tooth}/>
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
-                            <DialogDescription></DialogDescription>
-                            <DialogHeader>
-                            <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
-                                <div className="w-full flex flex-col gap-1 items-center">
-                                    <div><Tooth size = {"lg"} tooth = {tooth}/></div>
-                                    <div>
-                                        <Select region = {"top"} toothIndex={index} area={area}/>
-                                        <Select region = {"left"} toothIndex={index} area={area}/>                                       
-                                        <Select region = {"mid"} toothIndex={index} area={area}/>    
-                                        <Select region = {"right"} toothIndex={index} area={area}/>    
-                                        <Select region = {"bottom"} toothIndex={index} area={area}/> 
+            {(row1 == null || row2 == null) ? <>Loading...</> : 
+            <>
+                <h2 className = "font-bold text-gray-400">{area.replace("_", " ")}</h2>
+                <div className={`flex flex-row flex-wrap ${justify} gap-0.5 sm:gap-4`}>
+                    {row1.map((tooth, index) => {
+                        return(
+                        <div key = {index}>
+                            <Dialog
+                                open={toothDialogNum === tooth.toothNum}
+                                onOpenChange={(open) => setToothDialogNum(open ? tooth.toothNum : null)}
+                                >
+                                <DialogTrigger asChild className = "hover: cursor-pointer">
+                                    <div className = "flex flex-col items-center" >
+                                        {tooth.toothNum}
+                                        <Tooth size = {"sm"} tooth = {tooth}/>
                                     </div>
-                                        
-                                </div>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
+                                </DialogTrigger>
+                                <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                                    <DialogDescription></DialogDescription>
+                                    <DialogHeader>
+                                    <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
+                                        <div className="w-full flex flex-col gap-1 items-center">
+                                            <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                            <div>
+                                                <Select region = {"top"} toothIndex={index} area={area}/>
+                                                <Select region = {"left"} toothIndex={index} area={area}/>                                       
+                                                <Select region = {"mid"} toothIndex={index} area={area}/>    
+                                                <Select region = {"right"} toothIndex={index} area={area}/>    
+                                                <Select region = {"bottom"} toothIndex={index} area={area}/> 
+                                            </div>
+                                                
+                                        </div>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                        )
+                    })}
                 </div>
-                )
-            })}
+                <div className={`flex flex-row flex-wrap ${justify} gap-0.5`}>
+                    {row2.map((tooth, index) => {
+                        return(
+                        <div key = {index}>
+                            <Dialog
+                                open={toothDialogNum === tooth.toothNum}
+                                onOpenChange={(open) => setToothDialogNum(open ? tooth.toothNum : null)}
+                                >
+                                <DialogTrigger asChild className = "hover: cursor-pointer">
+                                    <div className = "flex flex-col items-center" >
+                                        {tooth.toothNum}
+                                        <Tooth size = {"sm"} tooth = {tooth}/>
+                                    </div>
+                                </DialogTrigger>
+                                <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                                    <DialogDescription></DialogDescription>
+                                    <DialogHeader>
+                                    <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
+                                        <div className="w-full flex flex-col gap-1 items-center">
+                                            <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                            <div>
+                                                <Select region = {"top"} toothIndex={index} area={area}/>
+                                                <Select region = {"left"} toothIndex={index} area={area}/>                                       
+                                                <Select region = {"mid"} toothIndex={index} area={area}/>    
+                                                <Select region = {"right"} toothIndex={index} area={area}/>    
+                                                <Select region = {"bottom"} toothIndex={index} area={area}/> 
+                                            </div>
+                                                
+                                        </div>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                        )
+                    })}
+                </div>
+                <hr />
+            </>
+            }
             </>
         )
     }
@@ -181,8 +237,14 @@ export default function dentalChart({params}) {
                 </div>
             </div>
             
-            <div className="flex flex-row flex-wrap justify-end gap-1">
-            <TeethDisplay area = {"Upper_Right"}/>
+            <div className="flex flex-col flex-wrap justify-end gap-2">
+                {selectedFilters.map((area, index) => {
+                    return(
+                        <div key = {index}>
+                            <TeethDisplay area = {area}/>
+                        </div>
+                    )
+                })}
             </div>
             </>
         : 
