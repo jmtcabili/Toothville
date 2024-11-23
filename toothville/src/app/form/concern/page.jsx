@@ -10,7 +10,12 @@ import { IoArrowBack, IoPersonCircle } from "react-icons/io5";
 import SignatureModal from "@/components/ui/SignatureModal";
 
 const formSchema = z.object({
-    concern: z.string().max(45, "Concern must be 45 characters or less").optional(),
+    concern: z.string().max(50, "Concern must be 50 characters or less").optional(),
+    dentist: z.string().max(50, "Concern must be 50 characters or less").optional(),
+    signatures: z.object({
+        patientSignature: z.string().nonempty("Patient signature is required"),
+        dentistSignature: z.string().nonempty("Dentist signature is required"),
+    }),
 });
 
 export default function SubmissionForm() {
@@ -19,6 +24,11 @@ export default function SubmissionForm() {
         resolver: zodResolver(formSchema),
         defaultValues: {
             concern: "",
+            dentist: "",
+            signatures: {
+                patientSignature: "",
+                dentistSignature: "",
+            },
         },
     });
 
@@ -28,37 +38,37 @@ export default function SubmissionForm() {
     const [isDentistModalOpen, setIsDentistModalOpen] = useState(false);
     const router = useRouter();
 
-    // Retrieve data from sessionStorage and set mount status
     useEffect(() => {
         const savedData = sessionStorage.getItem("formData");
-        const patientSignature = sessionStorage.getItem("patientSignature");
-        const dentistSignature = sessionStorage.getItem("dentistSignature");
+        const savedPatientSignature = sessionStorage.getItem("patientSignature");
+        const savedDentistSignature = sessionStorage.getItem("dentistSignature");
 
         if (savedData) {
             form.reset(JSON.parse(savedData));
         }
 
-        if (patientSignature) {
-            setPatientSignature(patientSignature);
+        if (savedPatientSignature) {
+            setPatientSignature(savedPatientSignature);
+            form.setValue("signatures.patientSignature", savedPatientSignature);
         }
 
-        if (dentistSignature) {
-            setDentistSignature(dentistSignature);
+        if (savedDentistSignature) {
+            setDentistSignature(savedDentistSignature);
+            form.setValue("signatures.dentistSignature", savedDentistSignature);
         }
 
         setIsMounted(true);
     }, []);
 
     const onSubmit = async (data) => {
-        const patientSignature = sessionStorage.getItem("patientSignature");
-        const dentistSignature = sessionStorage.getItem("dentistSignature");
+        const { signatures } = data;
 
-        if (!patientSignature || !dentistSignature) {
+        if (!signatures.patientSignature || !signatures.dentistSignature) {
             alert("Both signatures are required!");
             return;
         }
 
-        const formData = sessionStorage.getItem('formData');
+        const formData = sessionStorage.getItem("formData");
         const parsedData = JSON.parse(formData);
 
         const patientData = {
@@ -131,15 +141,14 @@ export default function SubmissionForm() {
                 heartSurgery: parsedData.heartSurgery,
             },
             concern: data.concern,
+            dentist: data.dentist,
             signatures: {
-                patient: patientSignature,
-                dentist: dentistSignature,
+                patientSignature: data.signatures.patientSignature,
+                dentistSignature: data.signatures.dentistSignature,
             },
         };
 
         try {
-            console.log("Patient data (front): ", patientData);
-
             const response = await fetch('/api/patient-record', {
                 method: 'POST',
                 headers: {
@@ -180,52 +189,86 @@ export default function SubmissionForm() {
             <div className={styles.container}>
                 <h2 className={styles.sectionTitle}>Concern</h2>
                 <form onSubmit={form.handleSubmit(onSubmit)} className={styles.form}>
+                    <label className={styles.label}>Dentist Name:</label>
+                    <input
+                        {...form.register("dentist")}
+                        placeholder="Enter dentist's name"
+                        maxLength={50}
+                        className={styles.input}
+                    />
                     <label className={styles.label}>General Concerns:</label>
                     <input
                         {...form.register("concern")}
-                        placeholder="Enter your concern (max 45 characters)"
-                        maxLength={45}
+                        placeholder="Enter your concern (max 50 characters)"
+                        maxLength={50}
                         className={styles.input}
                     />
                     <div>
-                        <label className={styles.label}>Consent Signatures:</label>
+                    <br></br>
+                        <label className={styles.label}>Patient's Signature:</label>
+                        {patientSignature ? (
+                            <img
+                                src={`data:image/png;base64,${patientSignature}`}
+                                alt="Patient's Signature"
+                                className={styles.signatureImage}
+                            />
+                        ) : (
+                            <p>No signature added yet</p>
+                        )}
                         <button
                             type="button"
+                            onClick={() => setIsPatientModalOpen(true)}
                             className={styles.signatureButton}
-                            onClick={() => setIsPatientModalOpen(true)} // Open the Patient Signature Modal
                         >
                             Add Patient Signature
                         </button>
+                        <br></br>
+                        <label className={styles.label}>Dentist's Signature:</label>
+                        {dentistSignature ? (
+                            <img
+                                src={`data:image/png;base64,${dentistSignature}`}
+                                alt="Dentist's Signature"
+                                className={styles.signatureImage}
+                            />
+                        ) : (
+                            <p>No signature added yet</p>
+                        )}
                         <button
                             type="button"
+                            onClick={() => setIsDentistModalOpen(true)}
                             className={styles.signatureButton}
-                            onClick={() => setIsDentistModalOpen(true)} // Open the Dentist Signature Modal
                         >
                             Add Dentist Signature
                         </button>
                     </div>
+
                     <button type="submit" className={styles.submitButton}>
                         Submit
                     </button>
                 </form>
-
-
             </div>
 
             <SignatureModal
                 isOpen={isPatientModalOpen}
                 onClose={() => setIsPatientModalOpen(false)}
-                onSave={setPatientSignature}
+                onSave={(signature) => {
+                    sessionStorage.setItem("patientSignature", signature);
+                    setPatientSignature(signature);
+                    form.setValue("signatures.patientSignature", signature); // Updates the form state
+                }}
                 title="Patient's Signature"
-                storageKey="patientSignature"
             />
             <SignatureModal
                 isOpen={isDentistModalOpen}
                 onClose={() => setIsDentistModalOpen(false)}
-                onSave={setDentistSignature}
+                onSave={(signature) => {
+                    sessionStorage.setItem("dentistSignature", signature);
+                    setDentistSignature(signature);
+                    form.setValue("signatures.dentistSignature", signature); // Updates the form state
+                }}
                 title="Dentist's Signature"
-                storageKey="dentistSignature"
             />
+
         </div>
     );
 }
