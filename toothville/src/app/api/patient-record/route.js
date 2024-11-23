@@ -44,7 +44,6 @@ export async function POST(request) {
 				mid: "Normal",
 				bottom: "Normal",
 				type: type, 
-				area: "Upper Right",
 				toothNum: i*10 + j
 			}
 			toothIdx++;
@@ -64,7 +63,6 @@ export async function POST(request) {
 				mid: "Normal",
 				bottom: "Normal",
 				type: type, 
-				area: "Upper Left",
 				toothNum: i*10 + j
 			}
 			toothIdx++;
@@ -83,7 +81,6 @@ export async function POST(request) {
 				mid: "Normal",
 				bottom: "Normal",
 				type: type, 
-				area: "Lower Right",
 				toothNum: i*10 + j
 			}
 			toothIdx++;
@@ -103,7 +100,6 @@ export async function POST(request) {
 				mid: "Normal",
 				bottom: "Normal",
 				type: type, 
-				area: "Lower Left",
 				toothNum: i*10 + j
 			}
 			toothIdx++;
