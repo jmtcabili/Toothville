@@ -46,6 +46,31 @@ export async function POST(request) {
 	const areas = ["Upper Right", "Upper Left", "Lower Right", "Lower Left"]
 	let areaIdx = 0;
 	let toothIdx = 0; 
+
+
+	for (i = 0; i = areas.length; i++){
+		let permNum = i + 5; 
+		
+	}
+	//initializer upper right
+	
+	for (let i = 5; i > 0; i=-4){
+		var numTeeth = (i == 5) ? 5 : 8
+		var type = (i == 5) ? "Temporary" : "Permanent"
+		for (let j = 1; j <= numTeeth; j++) {
+			dentalChart[toothIdx] = {
+				top: "Normal",
+				left: "Normal",
+				right: "Normal",
+				mid: "Normal",
+				bottom: "Normal",
+				type: type, 
+				area: "Upper Right",
+				toothNum: i*10 + j
+			}
+			toothIdx++;
+		}
+	}
 		
 	for (let i = 1; i <= 8; i++){
 		var num = (i >= 5) ? 5 : 8
