@@ -17,7 +17,7 @@ export async function POST(request) {
 					medicalHistory,
 					concern,
 					signatures,
-					dentist
+					dentist,
 	} = await request.json()
 
 	let dentalChart = {
@@ -118,7 +118,7 @@ export async function POST(request) {
 			insurance: insurance, 
 			medicalHistory: medicalHistory,
 			concern: concern,
-			signatures,
+			signatures: signatures,
 			dentist: dentist,
 			dentalChart: dentalChart
 	});
@@ -145,7 +145,7 @@ export async function PUT(request){
 	const user = await patientModel.findById(id)
 
 	//get updated fields
-	const { name, age, birthday, sex, mobile, email, civilStat, address, occupation,concern, dentist } = await request.json(); // expects patient information
+	const { name, age, birthday, sex, mobile, email, civilStat, address, occupation, concern, dentist, signatures } = await request.json(); // expects patient information
 
 	//change fields of queried user
 	if (name != undefined) user.name = name;
@@ -159,6 +159,7 @@ export async function PUT(request){
 	if (occupation != undefined) user.occupation = occupation;
 	if (concern != undefined) user.concern = concern; 
 	if (dentist != undefined) user.dentist = dentist;
+	if (signatures != undefined) user.signatures = signatures;
 	
 	await user.save()
 	

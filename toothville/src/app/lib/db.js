@@ -128,6 +128,19 @@ const patientSchema = new Schema ({
     },
     concern: String, 
     dentist: String,
+    signatures: {
+        patientSignature: {
+            type: String,
+            required: true,
+            maxlength: 500000, // Adjust this based on the expected size of the Base64 string
+        },
+        dentistSignature: {
+            type: String,
+            required: true,
+            maxlength: 500000,
+        },
+    },
+    
     //initialize to length 32
 
     dentalChart: {
@@ -146,14 +159,11 @@ const notesSchema = new Schema ({
     comment: String, 
 })
 
-
-
-
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
 
 export { patientModel}; 
-export { notesModel }; 
+export { notesModel };
 export default dbConnect
 
 
