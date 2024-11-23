@@ -7,16 +7,23 @@ export default function SignatureModal({ isOpen, onClose, onSave, title, storage
 
   const saveSignature = () => {
     if (signature) {
-      const signatureData = signature.getTrimmedCanvas().toDataURL("image/jpeg");
+      const canvas = signature.getTrimmedCanvas(); 
+      if (canvas) {
+        const signatureData = canvas.toDataURL("image/png"); 
 
-      // Save to sessionStorage
-      sessionStorage.setItem(storageKey, signatureData);
+        sessionStorage.setItem(storageKey, signatureData);
 
-      // Pass the base64 data back to the parent
-      onSave(signatureData);
+        onSave(signatureData.replace(/^data:image\/(png|jpg);base64,/, "")); 
 
-      signature.clear(); // Clear the signature pad
-      onClose(); // Close the modal
+        signature.clear(); 
+        onClose(); 
+      }
+    }
+  };
+
+  const clearSignature = () => {
+    if (signature) {
+      signature.clear(); 
     }
   };
 
@@ -35,6 +42,7 @@ export default function SignatureModal({ isOpen, onClose, onSave, title, storage
             />
           </div>
           <div className={styles.modalActions}>
+            <button onClick={clearSignature}>Clear</button>
             <button onClick={onClose}>Cancel</button>
             <button onClick={saveSignature}>Save</button>
           </div>
