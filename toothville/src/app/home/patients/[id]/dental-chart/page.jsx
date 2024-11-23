@@ -41,39 +41,53 @@ import { Filter } from 'lucide-react'
     "Veneer"
 ];
 
+
+
 export default function dentalChart({params}) {
 
     const { id } = params
-    const [chart, setChart] = useState([]); 
-    const [filteredTeeth, setFilteredTeeth] = useState([])
-    const [selectedFilters, setSelectedFilters] = useState([])
-
-
+    const [chart, setChart] = useState({
+        Upper_Right: [],
+        Upper_Left: [],
+        Lower_Right: [],
+        Lower_Left: [], 
+    }); 
+    
+    const [selectedFilters, setSelectedFilters] = useState(["Upper_Right", "Upper_Left", "Lower_Right", "Lower_Left"])
+    const [toothDialogNum, setToothDialogNum] = useState(null)
+    
+    
     useEffect(() => {
         async function fetchChart(){
             let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
             let patient = await response.json()   
             setChart(patient.dentalChart)
-            setFilteredTeeth(patient.dentalChart)
         }
         fetchChart()
     }, [])
 
-    const handleStatusChange = (index, area) => async(e) => {
-        //e.target.val -> new 
-        console.log(e.target.value);
-        let newChart = [...chart]
-        newChart[index][area] = e.target.value
+  
+    const handleStatusChange = (index, area, region) => async(e) => {
+        //index -> index of tooth in area
+        //area -> area of tooth (field of dental chart) [string]
+        //region -> region of tooth updated (i.e. top, left, right, mid, bottom) [string]
+        //e.target.val -> new status
+
+        //update chart with new status
+        let updatedChart = {...chart}
+        updatedChart[area][index][region] = e.target.value //set status in copy of chart
+        setChart(updatedChart) //updateState
         
-        setChart(newChart)
+         
         try{
             let response = await fetch (`http://localhost:3000/api/dental-chart?_id=${id}`, {
                 method: "PUT",
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(
                     {
-                        toothIndex: index, 
-                        updatedStatus: newChart[index]
+                        updatedTooth: updatedChart[area][index],
+                        area: area, 
+                        toothIdx: index,
                     }
                 )
             })
@@ -88,17 +102,17 @@ export default function dentalChart({params}) {
         }
     }
 
-    function Select({ area, toothIndex }) {
+    function Select({ region, toothIndex, area}) {
         return (
             <div className="flex items-center space-x-2 mb-1">
-                <label className="w-16 font-medium">
-                    {area}:
-                </label>
+                <span className="w-16 font-medium">
+                    {region}:
+                </span>
                 <select 
-                    name={`select${area}-${toothIndex}`} 
+                    name={`select${region}-${toothIndex}`} 
                     className="max-w-[200px] border-gray-300 rounded-md p-1"
-                    value={chart[toothIndex][area]} 
-                    onChange={handleStatusChange(toothIndex, area)}
+                    value={chart[area][toothIndex][region]} 
+                    onChange={handleStatusChange(toothIndex, area, region)}
                 >
                     {statuses.map((status, index) => {
                         return (
@@ -111,50 +125,126 @@ export default function dentalChart({params}) {
             </div>
         );
     }
+
+    function TeethDisplay({ area }) {
+        //area -> string
+        let row1, row2 = []
+        let justify = "justify-end"
+        if (area.split("_")[0]==="Upper"){
+            row1 = chart[area].slice(0, 5)
+            row2 = chart[area].slice(5)
+        }else{
+            row1 = chart[area].slice(0, 8)
+            row2 = chart[area].slice(8)
+        }
+        if (area.split("_")[1]==="Left"){
+            justify = "justify-start"
+        }
+        return(
+            <>
+            {(row1 == null || row2 == null) ? <>Loading...</> : 
+            <>
+                <h2 className = "font-bold text-gray-400">{area.replace("_", " ")}</h2>
+                <div className={`flex flex-row flex-wrap ${justify} gap-0.5 sm:gap-4`}>
+                    {row1.map((tooth, index) => {
+                        return(
+                        <div key = {index}>
+                            <Dialog
+                                open={toothDialogNum === tooth.toothNum}
+                                onOpenChange={(open) => setToothDialogNum(open ? tooth.toothNum : null)}
+                                >
+                                <DialogTrigger asChild className = "hover: cursor-pointer">
+                                    <div className = "flex flex-col items-center" >
+                                        {tooth.toothNum}
+                                        <Tooth size = {"sm"} tooth = {tooth}/>
+                                    </div>
+                                </DialogTrigger>
+                                <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                                    <DialogDescription></DialogDescription>
+                                    <DialogHeader>
+                                    <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
+                                        <div className="w-full flex flex-col gap-1 items-center">
+                                            <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                            <div>
+                                                <Select region = {"top"} toothIndex={index} area={area}/>
+                                                <Select region = {"left"} toothIndex={index} area={area}/>                                       
+                                                <Select region = {"mid"} toothIndex={index} area={area}/>    
+                                                <Select region = {"right"} toothIndex={index} area={area}/>    
+                                                <Select region = {"bottom"} toothIndex={index} area={area}/> 
+                                            </div>
+                                                
+                                        </div>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                        )
+                    })}
+                </div>
+                <div className={`flex flex-row flex-wrap ${justify} gap-0.5`}>
+                    {row2.map((tooth, index) => {
+                        return(
+                        <div key = {index}>
+                            <Dialog
+                                open={toothDialogNum === tooth.toothNum}
+                                onOpenChange={(open) => setToothDialogNum(open ? tooth.toothNum : null)}
+                                >
+                                <DialogTrigger asChild className = "hover: cursor-pointer">
+                                    <div className = "flex flex-col items-center" >
+                                        {tooth.toothNum}
+                                        <Tooth size = {"sm"} tooth = {tooth}/>
+                                    </div>
+                                </DialogTrigger>
+                                <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
+                                    <DialogDescription></DialogDescription>
+                                    <DialogHeader>
+                                    <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
+                                        <div className="w-full flex flex-col gap-1 items-center">
+                                            <div><Tooth size = {"lg"} tooth = {tooth}/></div>
+                                            <div>
+                                                <Select region = {"top"} toothIndex={index} area={area}/>
+                                                <Select region = {"left"} toothIndex={index} area={area}/>                                       
+                                                <Select region = {"mid"} toothIndex={index} area={area}/>    
+                                                <Select region = {"right"} toothIndex={index} area={area}/>    
+                                                <Select region = {"bottom"} toothIndex={index} area={area}/> 
+                                            </div>
+                                                
+                                        </div>
+                                    </DialogHeader>
+                                </DialogContent>
+                            </Dialog>
+                        </div>
+                        )
+                    })}
+                </div>
+                <hr />
+            </>
+            }
+            </>
+        )
+    }
+
+
     return (
     <>
-        {chart.length > 0 ? 
+        {chart != null ? 
             <>
             <div className="flex flex-row items-center justify-between mb-3">
                 <h2 className='font-bold'>Dental Chart</h2>
                 <div id="filter"><FilterButton selectedFilters={selectedFilters} 
                                             setSelectedFilters={setSelectedFilters}
-                                            chart = {chart}
-                                            setFilteredTeeth = {setFilteredTeeth}/>
+                                            chart = {chart}/>
                 </div>
             </div>
-            <div className="flex flex-row flex-wrap justify-end gap-1">
-            {(filteredTeeth.map((tooth, index) => {
-                return(
-                <div key = {index}>
-                    <Dialog>
-                        <DialogTrigger>
-                            <div className = "flex flex-col items-center" >
-                                {tooth.toothNum}
-                                <Tooth size = {"sm"} tooth = {tooth}/>
-                            </div>
-                        </DialogTrigger>
-                        <DialogContent className = "sm:max-w-[350px] bg-gradient-to-br from-white to-gray-100">
-                            <DialogDescription></DialogDescription>
-                            <DialogHeader>
-                            <DialogTitle className = "center">Tooth {tooth.toothNum}</DialogTitle>
-                                <div className="w-full flex flex-col gap-1 items-center">
-                                    <div><Tooth size = {"lg"} tooth = {tooth}/></div>
-                                    <div>
-                                        <Select area = {"top"} toothIndex={index}/>
-                                        <Select area = {"left"} toothIndex={index}/>                                       
-                                        <Select area = {"mid"} toothIndex={index}/>    
-                                        <Select area = {"right"} toothIndex={index}/>    
-                                        <Select area = {"bottom"} toothIndex={index}/> 
-                                    </div>
-                                        
-                                </div>
-                            </DialogHeader>
-                        </DialogContent>
-                    </Dialog>
-                </div>
-                )
-            }))}
+            
+            <div className="flex flex-col flex-wrap justify-end gap-2">
+                {selectedFilters.map((area, index) => {
+                    return(
+                        <div key = {index}>
+                            <TeethDisplay area = {area}/>
+                        </div>
+                    )
+                })}
             </div>
             </>
         : 

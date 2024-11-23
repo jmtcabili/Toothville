@@ -22,16 +22,14 @@ export async function PUT(request){
     const patientID = searchParams.get('_id')
 
     //get updated tooth statuses
-    const {toothIndex, updatedStatus} = await request.json()
+    const {updatedTooth, area, toothIdx} = await request.json()
 
     //set updated chart
     const filter = {_id: patientID}
-    const update = updatedStatus
     const patient = await patientModel.findOne(filter);
-
-    patient.dentalChart[toothIndex] = updatedStatus;
+    patient.dentalChart[area][toothIdx] = updatedTooth;
 
     patient.save();
 
-    return NextResponse.json(patient)
+    return NextResponse.json(updatedTooth)
 }

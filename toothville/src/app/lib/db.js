@@ -40,6 +40,16 @@ async function dbConnect() {
     return cached.conn
 }
 
+const ToothSchema = new mongoose.Schema({
+    top: {type: String},
+    left: {type: String}, 
+    right:  {type: String}, 
+    mid: {type: String},
+    bottom: {type: String}, 
+    type: {type: String},
+    area: {type: String},
+    toothNum: {type: Number}
+})
 
 const patientSchema = new Schema ({
     personalInformation: {
@@ -120,18 +130,13 @@ const patientSchema = new Schema ({
     dentist: String,
     //initialize to length 32
 
-    dentalChart: [
-        {
-            top: {type: String},
-            left: {type: String}, 
-            right:  {type: String}, 
-            mid: {type: String},
-            bottom: {type: String}, 
-            type: {type: String},
-            area: {type: String},
-            toothNum: {type: Number}
-        },
-    ]
+    dentalChart: {
+        Upper_Right: [ToothSchema],
+        Upper_Left: [ToothSchema],
+        Lower_Right: [ToothSchema],
+        Lower_Left: [ToothSchema]        
+    },
+    
 })
 
 const notesSchema = new Schema ({

@@ -17,7 +17,11 @@ const filterOptions = [
   { id: "Lower_Left", label: "Lower Left" },
 ]
 
+
+
 export default function FilterButton({selectedFilters, setSelectedFilters, chart, setFilteredTeeth}) {
+
+    //will change the state that contains the list of filtered teeth areas
     const handleFilterChange = (filterId) => {
         setSelectedFilters((prev) =>
           prev.includes(filterId)
@@ -26,6 +30,8 @@ export default function FilterButton({selectedFilters, setSelectedFilters, chart
         )
     }
 
+    /*on render and when filters change, will set teeth list based on filters
+    
     useEffect(() => {
       const filterTeeth = () =>{
         let teeth = chart.filter((tooth) =>{
@@ -42,8 +48,9 @@ export default function FilterButton({selectedFilters, setSelectedFilters, chart
       }
       filterTeeth()
     },[selectedFilters])
+    */
     
-        
+    
     
     return (
       <Popover className = "!bg-white">
