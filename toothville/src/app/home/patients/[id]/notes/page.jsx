@@ -7,7 +7,17 @@ import {
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
-  } from "@/components/ui/accordion"
+} from "@/components/ui/accordion"
+
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+  
 
 export default function page({params}) {
     const { id }  = params
@@ -71,22 +81,18 @@ export default function page({params}) {
         
         return (
         <>
-            <div className="bg-white px-3 py-3 rounded mb-2">
-                Create note
-                <form ref = {formRef} className = "py-2 flex flex-col">
-                    <label htmlFor="date" className = "font-semibold mb-1">Date: </label>
-                    <input type="date" ref = {dateRef} value = {currDate} onChange={handleDateChange} required className = "border mb-2"/>
-                    <label htmlFor="procedure" className = "font-semibold mb-1">Procedure: </label>
-                    <input type="text" ref = {procedureRef} required className="border mb-1"/>
-                    <label htmlFor="procedure" className = "font-semibold mb-1">Comments: </label>
-                    <textarea type="text" ref = {commentsRef} required className="border mb-4 min-h-[50px]"/>
-
-                    <button type = "submit" 
-                            onClick={handleSubmit}
-                            className = "bg-nav_blue py-3 rounded text-white">Add note</button>
-                        
-                </form>
-            </div>
+            <Dialog>
+                <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-2 py-2 rounded">Add Note</DialogTrigger>
+                <DialogContent className ="bg-gradient-to-br from-white to-white">
+                    <DialogHeader>
+                    <DialogTitle>Are you absolutely sure?</DialogTitle>
+                    <DialogDescription>
+                        This action cannot be undone. This will permanently delete your account
+                        and remove your data from our servers.
+                    </DialogDescription>
+                    </DialogHeader>
+                    </DialogContent>
+            </Dialog>
         </>
         )
     }
@@ -157,7 +163,7 @@ export default function page({params}) {
             {procedures.map((proc, index) => {return <div key={index}>{index+1}.) {proc.name}</div>})}
             <br />
             <div className="flex flex-col">Comments: &nbsp; 
-                <textarea readOnly value={comment} className = "min-h-[80px] w-full"></textarea>
+                <textarea readOnly value={comment} className = "w-full"></textarea>
             </div>
             
             <div className="flex flex-row flex-wrap gap-2 py-2">
@@ -219,8 +225,8 @@ export default function page({params}) {
                 </Accordion>
             </div>
         </div>
-        <button className = "bg-nav_blue w-full px-2 py-2 text-white rounded-sm mt-2"> Add note</button>
-        
+        <AddNote/>
+
     </>
     )
 }
