@@ -96,7 +96,7 @@ function Profile(){
 function Actions(){
   return (
     <>
-        <div className="grid grid-cols-2 w-full rounded-lg shadow-lg mt-6 gap-2 px-2 py-4 mb-6">
+        <div className="grid grid-cols-2 w-full rounded-lg shadow-lg mt-2 gap-2 px-2 py-4 mb-2">
             
             <div className="col-span-2">
               <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-blue-500 text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">

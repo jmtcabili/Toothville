@@ -4,13 +4,13 @@ import { useState, useEffect } from 'react'
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import categories from "./categories.json"
 
 export function ProcedureForm({ procedure, onSave, onCancel }) {
   const [name, setName] = useState(procedure?.name || '')
   const [price, setPrice] = useState(procedure?.price || '')
   const [category, setCategory] = useState(procedure?.category || '')
-
-
+  
   useEffect(() => {
     if (procedure) {
       setName(procedure.name)
