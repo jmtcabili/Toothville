@@ -36,7 +36,9 @@ export async function GET() {
 
 export async function PUT (request){
     //get id from front end 
-    const {id, newName, newCategory, newPrice} = await request.json();
+    const { searchParams } = new URL(request.url)
+	const id = searchParams.get('_id')
+    const {newName, newCategory, newPrice} = await request.json();
 
     //search procedure by id
     const procedure = await proceduresModel.findById(id);
@@ -52,9 +54,8 @@ export async function PUT (request){
 }
 
 export async function DELETE(request){
-    //get id from front end
-    const {id} = await request.json();
-
+    //get id from path
+    
     //check if it exists
     const procedure = await proceduresModel.findById(id);
 

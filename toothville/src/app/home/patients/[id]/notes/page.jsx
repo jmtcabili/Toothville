@@ -92,7 +92,7 @@ export default function page({params}) {
     }
     function NoteComponent({note, index, update}){
 
-        const {_id, procedureName, date, comment} = note; 
+        const {_id, procedures, date, comment} = note; 
         
         const [noteDate, setNoteDate] = useState((new Date(date)).toISOString().split("T")[0]);
         const [noteComment, setComment] = useState(comment);
@@ -109,7 +109,7 @@ export default function page({params}) {
                     body: JSON.stringify(
                         {
                             date: noteDate,
-                            procedureName: procedureName,
+                            procedures: procedures,
                             comment: noteComment
                         }
                     ), 
@@ -153,14 +153,18 @@ export default function page({params}) {
             </div>
         </>) : 
         (<>
-            <div>Date: {noteDate}</div>
+            <div className="font-bold">Procedures performed: </div>
+            {procedures.map((proc, index) => {return <div key={index}>{index+1}.) {proc.name}</div>})}
+            <br />
             <div className="flex flex-col">Comments: &nbsp; 
                 <textarea readOnly value={comment} className = "min-h-[80px] w-full"></textarea>
             </div>
             
-            <div className="flex flex-row gap-2 py-2">
+            <div className="flex flex-row flex-wrap gap-2 py-2">
                 <button className="px-2 py-2 text-white bg-nav_blue rounded-md min-w-[75px]"
                         onClick={() => handleUpdate(index)}> Edit </button>
+                <button className="px-3 py-2 text-white bg-green-800 rounded-md min-w-[75px]">
+                        View Billing</button>
                 <button className="px-2 py-2 text-white bg-red-500 rounded-md min-w-[75px]"
                         onClick={async() => { await handleDelete(); fetchPatientNotes();}}> Delete</button>
             </div>
@@ -169,7 +173,7 @@ export default function page({params}) {
         <>  
             <AccordionItem value={`item-${index}`} className="group border rounded-lg overflow-hidden">
                 <AccordionTrigger className="px-4 group-data-[state=open]:bg-primary-foreground transition-colors">
-                {procedureName}
+                {new Date(date).toDateString().split(" ").slice(1).join(" ")}
                 </AccordionTrigger>
                 <AccordionContent className="px-4 group-data-[state=open]:bg-primary-foreground">
                    {accordionContent}
@@ -192,16 +196,16 @@ export default function page({params}) {
 
     return (
     <>
-        <PatientSummary params={params}/>
-        <AddNote/>  
+        <PatientSummary params={params}/> 
+        
         <div className="bg-white px-3 py-3 rounded min-h-[300px]">
             <div id="title" className = "flex flex-row gap-3 items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-5">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
             </svg>
-                <h3>Progress Notes</h3>
+                <h3>Progress Notes</h3> <br />
             </div>
-            <div id="notes" className = "flex flex-col gap-2 px-2 py-4">
+            <div id="notes" className = "flex flex-col gap-2 px-2 py-4 mt-2 overflow-scroll max-h-[325px]">
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {notes.map((note, index) => {
                         const isUpdating = (index == updatingIdx)
@@ -215,6 +219,8 @@ export default function page({params}) {
                 </Accordion>
             </div>
         </div>
+        <button className = "bg-nav_blue w-full px-2 py-2 text-white rounded-sm mt-2"> Add note</button>
+        
     </>
     )
 }
