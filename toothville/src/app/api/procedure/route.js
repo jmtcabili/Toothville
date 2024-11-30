@@ -55,6 +55,8 @@ export async function PUT (request){
 
 export async function DELETE(request){
     //get id from path
+    const { searchParams } = new URL(request.url)
+	const id = searchParams.get('_id')
     
     //check if it exists
     const procedure = await proceduresModel.findById(id);

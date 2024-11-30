@@ -96,34 +96,37 @@ function Profile(){
 function Actions(){
   return (
     <>
-        <div className="grid grid-cols-2 w-full rounded-lg shadow-lg mt-6">
+        <div className="grid grid-cols-2 w-full rounded-lg shadow-lg mt-6 gap-2 px-2 py-4 mb-6">
+            
             <div className="col-span-2">
-                <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-white py-4 px-2 w-full rounded-t-lg min-h-[100px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="size-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                    </svg>
-                    <div id="details" className="flex flex-col justify-center items-left">
-                        <Link href = "../form/personal-information" className='font-bold text-2xl'>Add Patient</Link>
-                    </div>
-                </div>
+              <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-blue-500 text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="size-6">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+                  </svg>
+                  <div id="details" className="flex flex-col justify-center">
+                      <Link href = "../form/personal-information" className='font-bold'>Add Patient</Link>
+                  </div>
+              </div>
             </div>
+            
+        
             <div id = "action2" className="">
-                <div className="flex flex-row gap-x-2 justify-start items-center bg-nav_blue py-6 px-2 w-full rounded-bl-lg max-h-[200px]">
-                    <div id="details" className="flex flex-col justify-center items-left">
-                        <div className="font-bold text-white">
+                <div className="flex flex-col gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 w-full h-20 rounded">
+                    <div id="details" className="flex flex-col">
+                        <div className="font-bold text-sm text-white">
                             <Link href='/home/patients'>View patients</Link>
                         </div>
-                        <div id="usertype" className="font-extralight"></div>
                     </div>
                 </div>
             </div>
 
           
           <div id = "action3" className="">
-          <div className="flex flex-row gap-x-2 justify-start items-center bg-blue-200 py-6 px-2 w-full rounded-br-lg max-h-[200px]">
-              <div id="details" className="flex flex-col justify-center ">
-                <div className="font-bold text-black">Notify patient</div>
-                <div id="usertype" className="font-extralight"></div>
+          <div className="flex flex-row gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 h-20 w-full rounded">
+              <div id="details" className="flex flex-col">
+                <div className="font-bold text-white text-sm text-center">
+                    <Link href = "/home/procedures">Manage Procedures</Link>
+                </div>
               </div>
             </div>
           </div>
@@ -176,10 +179,12 @@ export default function Dashboard() {
           />
         </div>
 
+        <Actions/>
         {/* Chart Box */}
                 {/* Parent container */}
+        
         <div className="flex flex-col md:flex-row gap-6 w-full mt-6">
-
+       
         {/* Chart section */}
           <Chart />
 
@@ -238,14 +243,8 @@ export default function Dashboard() {
           <span className="text-3xl font-bold text-gray-800 mb-1">45</span>
           <div className="text-gray-500 text-lg">Other Patients</div>
         </div>
-      </div>
-
         </div>
-
-        <div>
-        
-        <Actions />
-        </div> 
+        </div>
       </div>
                 
     </>
