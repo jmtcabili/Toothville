@@ -152,18 +152,20 @@ const patientSchema = new Schema ({
     
 })
 
-const notesSchema = new Schema ({
-    patientID: String,
-    date: Date, 
-    procedureName: String, 
-    comment: String, 
-})
-
 const procedureSchema = new Schema({
     name: String,
     price: Number,
     category: String,
 })
+
+const notesSchema = new Schema ({
+    patientID: String,
+    date: Date, 
+    procedures: [procedureSchema], 
+    comment: String, 
+})
+
+
 
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
