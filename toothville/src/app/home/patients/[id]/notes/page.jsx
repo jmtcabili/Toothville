@@ -17,6 +17,9 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
+
+import { Input } from "@/components/ui/input"
+import {Combobox} from "./Combobox"
   
 
 export default function page({params}) {
@@ -28,6 +31,8 @@ export default function page({params}) {
     const dateRef = useRef(); 
     const procedureRef = useRef();
     const commentsRef = useRef(); 
+
+    
 
     //let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
     //let patient = await response.json()
@@ -78,20 +83,54 @@ export default function page({params}) {
     //should not be able to add note while current notes are not available
 
     function AddNote(){
+
+        const [category, setCategory] = useState("");
+        const [nameFilter, setNameFilter] = useState("");
+        const [procedures, setProcedures] = useState([]);
+        const [chosenProcedures, setChosenProcedures] = useState([]);
+
+        useEffect(() => {
+            const fetchProcedures = async() => {
+                let result = await fetch("http://localhost:3000/api/procedure")
+                let procedures = await result.json(); 
+                setProcedures(procedures);
+            }
+            fetchProcedures();
+        }, [])
+
+        const filteredProcedures = procedures.filter((procedure) =>{
+            return procedure.name.toLowerCase().includes(nameFilter.toLowerCase())
+        })
         
         return (
         <>
             <Dialog>
+                <DialogDescription></DialogDescription>
                 <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-2 py-2 rounded">Add Note</DialogTrigger>
-                <DialogContent className ="bg-gradient-to-br from-white to-white">
+                <DialogContent className ="bg-gradient-to-br from-white to-white min-h-[500px] flex flex-col justify-start">
                     <DialogHeader>
-                    <DialogTitle>Are you absolutely sure?</DialogTitle>
-                    <DialogDescription>
-                        This action cannot be undone. This will permanently delete your account
-                        and remove your data from our servers.
-                    </DialogDescription>
+                    <DialogTitle className>Record a procedure</DialogTitle>
+                    <hr />
                     </DialogHeader>
-                    </DialogContent>
+                    <div>
+                        <h1 className = "font-medium w-full text-left mb-1">Category: </h1>
+                        <Combobox setCategory={setCategory}/>
+                    </div>
+                    <div>
+                    <h1 className = "font-medium w-full text-left mb-1">Name: </h1>
+                        <Input
+                            placeholder="Filter by name"
+                            onChange={(e) => setNameFilter(e.target.value)}
+                            className = "!bg-white text-black"
+                        >
+                        </Input>
+                    </div>
+                    {filteredProcedures.map((procedure, index) => {
+                        return(
+                            <a key = {index}>{procedure.name}</a>
+                        )
+                    })}
+                </DialogContent>
             </Dialog>
         </>
         )
@@ -229,4 +268,6 @@ export default function page({params}) {
 
     </>
     )
+
+    
 }

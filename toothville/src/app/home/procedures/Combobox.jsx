@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-import categories from "./categories.json"
+import categories from "@/app/home/procedures/categories.json"
 
 export function Combobox({setCategory}) {
   const [open, setOpen] = React.useState(false)
