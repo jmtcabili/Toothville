@@ -129,13 +129,16 @@ export default function dentalChart({params}) {
     function TeethDisplay({ area }) {
         //area -> string
         let row1, row2 = []
+        let offset = 0
         let justify = "justify-end"
         if (area.split("_")[0]==="Upper"){
             row1 = chart[area].slice(0, 5)
             row2 = chart[area].slice(5)
+            offset = 5
         }else{
             row1 = chart[area].slice(0, 8)
             row2 = chart[area].slice(8)
+            offset = 8
         }
         if (area.split("_")[1]==="Left"){
             justify = "justify-start"
@@ -202,11 +205,11 @@ export default function dentalChart({params}) {
                                         <div className="w-full flex flex-col gap-1 items-center">
                                             <div><Tooth size = {"lg"} tooth = {tooth}/></div>
                                             <div>
-                                                <Select region = {"top"} toothIndex={index} area={area}/>
-                                                <Select region = {"left"} toothIndex={index} area={area}/>                                       
-                                                <Select region = {"mid"} toothIndex={index} area={area}/>    
-                                                <Select region = {"right"} toothIndex={index} area={area}/>    
-                                                <Select region = {"bottom"} toothIndex={index} area={area}/> 
+                                                <Select region = {"top"} toothIndex={index+offset} area={area}/>
+                                                <Select region = {"left"} toothIndex={index+offset} area={area}/>                                       
+                                                <Select region = {"mid"} toothIndex={index+offset} area={area}/>    
+                                                <Select region = {"right"} toothIndex={index+offset} area={area}/>    
+                                                <Select region = {"bottom"} toothIndex={index+offset} area={area}/> 
                                             </div>
                                                 
                                         </div>
