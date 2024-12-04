@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import categories from "./categories.json"
+import { Combobox } from "./Combobox.jsx"
 
 export function ProcedureForm({ procedure, onSave, onCancel }) {
   const [name, setName] = useState(procedure?.name || '')
@@ -51,14 +52,7 @@ export function ProcedureForm({ procedure, onSave, onCancel }) {
       </div>
       <div>
         <Label htmlFor="category">Category</Label>
-        <Input
-          id="category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          placeholder="Procedure category"
-          className = "!bg-white"
-          required
-        />
+        <Combobox setCategory = {setCategory}/>
       </div>
       <div className="w-full space-x-2">       
         
