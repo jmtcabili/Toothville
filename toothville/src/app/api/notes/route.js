@@ -8,7 +8,7 @@ export async function POST(request){
     const {patientID, date, procedures, comment} = await request.json(); 
 
     //procedure -> object of procedureSchema
-    
+
     
     const tempPatientNote = new notesModel({
         patientID: patientID, 
