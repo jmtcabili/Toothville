@@ -75,8 +75,7 @@ const patientSchema = new Schema ({
         guardianName: String,
         guardianPhone: String,
     },
-    emergencyContacts: [
-        {
+    emergencyContacts:[ {
             name: String,
             relation: String,
             phone: String,
@@ -132,7 +131,7 @@ const patientSchema = new Schema ({
         patientSignature: {
             type: String,
             required: true,
-            maxlength: 500000, // Adjust this based on the expected size of the Base64 string
+            maxlength: 500000,
         },
         dentistSignature: {
             type: String,
@@ -152,28 +151,18 @@ const patientSchema = new Schema ({
     
 })
 
-const procedureSchema = new Schema({
-    name: String,
-    price: Number,
-    category: String,
-})
-
 const notesSchema = new Schema ({
     patientID: String,
     date: Date, 
-    procedures: [procedureSchema], 
+    procedureName: String, 
     comment: String, 
 })
 
-
-
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
-const proceduresModel = mongoose.models.procedure || mongoose.model("procedure", procedureSchema);
 
 export { patientModel}; 
 export { notesModel };
-export { proceduresModel };
 export default dbConnect
 
 
