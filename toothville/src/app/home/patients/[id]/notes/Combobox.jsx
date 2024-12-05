@@ -27,7 +27,7 @@ export function Combobox({setCategory}) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild className="!w-full overflow-x-scroll">
+      <PopoverTrigger asChild className="!w-full overflow-x-auto">
         <Button
           variant="outline"
           role="combobox"
@@ -43,9 +43,9 @@ export function Combobox({setCategory}) {
       <PopoverContent className="w-full p-0 !bg-white">
         <Command className = "!bg-white !text-black w-[300px]">
           <CommandInput placeholder="Search category" className="!text-black"/>
-          <CommandList className = "!max-h-[200px] overflow-y-scroll">
+          <CommandList className = "!max-h-[200px] overflow-y-auto">
             <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup className="overflow-y-scroll">
+            <CommandGroup className="overflow-y-auto">
               {categories.map((category, index) => (
                 <CommandItem
                   key={index}
