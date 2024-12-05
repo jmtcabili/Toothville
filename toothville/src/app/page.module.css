@@ -16,7 +16,7 @@
 
 .form-container {
     background-color: white;
-    padding: 10px 50px;
+    padding: 20px 50px;
     border-radius: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -52,9 +52,7 @@
     padding: 13px 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    position: relative;
-    display: inline-block;
-    white-space: nowrap; 
+    position: relative;    
     opacity: 0; 
     max-width: 0; 
     transition: max-width 3s ease, opacity 2.5s ease;
@@ -76,7 +74,11 @@
 
   .show {
     opacity: 1; 
-    max-width: 400px; 
+    max-width: 100%; 
+    display: flex; 
+    flex-wrap: wrap;
+    justify-content: start;
+    text-align: left;
   }
   
   
