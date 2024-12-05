@@ -161,7 +161,7 @@ export default function page({params}) {
                                 </Input>
                             </div>
                             <div className = "flex flex-col gap-1.5 rounded py-4  justify-between h-[350px]">
-                                <div className = "flex flex-col gap-1.5 w-full rounded overflow-y-scroll">
+                                <div className = "flex flex-col gap-1.5 w-full rounded overflow-y-auto">
                                     {filteredProcedures.map((procedure, index) => {
                                         return(
                                             <div key = {index} className = "flex flex-row w-full py-2 px-2 items-center bg-gray-100  rounded"
@@ -185,7 +185,7 @@ export default function page({params}) {
                                 </div>
                                 <div className = "flex flex-row justify-between items-center border-t py-1 border-black">
                                     <div id="total" className = "">Count: {chosenProcedures.length}</div>
-                                    <div id="total_price" className = "overflow-x-scroll">Sum: ₱{getSum()}</div>
+                                    <div id="total_price" className = "overflow-x-auto">Sum: ₱{getSum()}</div>
                                 </div>
                             </div>
                         {/*on close, clear list */}
@@ -312,7 +312,7 @@ export default function page({params}) {
             </svg>
                 <h3>Progress Notes</h3> <br />
             </div>
-            <div id="notes" className = "flex flex-col gap-2 px-2 py-4 mt-2 overflow-y-scroll max-h-[325px]">
+            <div id="notes" className = "flex flex-col gap-2 px-2 py-4 mt-2 overflow-y-auto max-h-[325px]">
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {notes.map((note, index) => {
                         const isUpdating = (index == updatingIdx)
