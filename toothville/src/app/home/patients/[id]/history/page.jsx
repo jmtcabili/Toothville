@@ -8,6 +8,8 @@ export default function HistoryPage({ params }) {
   const { id } = params;
   const [medicalHistory, setMedicalHistory] = useState(null);
   const [showMore, setShowMore] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editableHistory, setEditableHistory] = useState(null);
 
   useEffect(() => {
     async function fetchMedicalHistory() {
@@ -17,7 +19,25 @@ export default function HistoryPage({ params }) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const patient = await response.json();
-        setMedicalHistory(patient.medicalHistory);
+        const history = patient.medicalHistory || {};
+        const initializedHistory = {
+          treatedMedicalReason: history.treatedMedicalReason || '',
+          lastMedicalCheckup: history.lastMedicalCheckup || '',
+          healthChangeReason: history.healthChangeReason || '',
+          medicationsList: history.medicationsList || '',
+          allergies: {
+            medications: history.allergies?.medications || '',
+            latexRubberMetals: history.allergies?.latexRubberMetals || '',
+            others: history.allergies?.others || '',
+          },
+          adverseReaction: history.adverseReaction || false,
+          reactionExplanation: history.reactionExplanation || '',
+          asthma: history.asthma || false,
+          heartIssues: history.heartIssues || false,
+          heartSurgery: history.heartSurgery || false,
+        };
+        setMedicalHistory(history);
+        setEditableHistory(initializedHistory);
       } catch (error) {
         console.error('Error fetching medical history:', error);
       }
@@ -26,57 +46,110 @@ export default function HistoryPage({ params }) {
     fetchMedicalHistory();
   }, [id]);
 
+  const handleEditToggle = () => {
+    setIsEditing(!isEditing);
+  };
+
+  const handleInputChange = (key, value) => {
+    setEditableHistory((prev) => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      // Flatten nested fields before sending if necessary
+      const preparedData = { ...editableHistory };
+
+      // Convert fields as needed, e.g., dates back to ISO format
+      if (preparedData.lastMedicalCheckup) {
+        preparedData.lastMedicalCheckup = new Date(preparedData.lastMedicalCheckup).toISOString();
+      }
+
+      const response = await fetch(`/api/medical-history?_id=${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(preparedData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Error saving data: ${response.statusText}`);
+      }
+
+      const updatedData = await response.json();
+      setMedicalHistory(updatedData.medicalHistory);
+      setEditableHistory(updatedData.medicalHistory);
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error saving medical history:', error);
+    }
+  };
+
+
+  const formatDate = (isoDate) => {
+    if (!isoDate) return '';
+    const date = new Date(isoDate);
+    return new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'long', day: 'numeric' }).format(date);
+  };
+
   if (!medicalHistory) {
     return <div className={styles.loading}>Loading medical history...</div>;
   }
 
   const questionsAndAnswers = [
     {
+      key: 'treatedMedicalReason',
       question: 'Are you being treated for any medical condition at the present or have been treated within the past year?',
-      answer: medicalHistory.treatedMedicalReason || 'No information provided.',
     },
     {
+      key: 'lastMedicalCheckup',
       question: 'When was your last medical checkup?',
-      answer: medicalHistory.lastMedicalCheckup
-        ? new Date(medicalHistory.lastMedicalCheckup).toLocaleDateString()
-        : 'No information provided.',
     },
     {
+      key: 'healthChangeReason',
       question: 'Has there been any change in your general health in the past year?',
-      answer: medicalHistory.healthChangeReason || 'No information provided.',
     },
     {
+      key: 'medicationsList',
       question: 'Are you taking any medications, non-prescription drugs, or natural supplements of any kind?',
-      answer: medicalHistory.medicationsList || 'No information provided.',
     },
     {
-      question: 'Do you have any allergies?',
-      answer: `
-        Medications: ${medicalHistory.allergies?.medications || 'None'},
-        Latex / Rubber Products / Metals: ${medicalHistory.allergies?.latexRubberMetals || 'None'},
-        Others: ${medicalHistory.allergies?.others || 'None'}
-      `,
+      key: 'allergies.medications',
+      question: 'Do you have any allergies to medications?',
     },
     {
+      key: 'allergies.latexRubberMetals',
+      question: 'Do you have any allergies to latex, rubber, or metals?',
+    },
+    {
+      key: 'allergies.others',
+      question: 'Do you have other allergies?',
+    },
+    {
+      key: 'adverseReaction',
       question: 'Have you ever had a peculiar or adverse reaction to any medications or injections?',
-      answer: medicalHistory.adverseReaction
-        ? medicalHistory.reactionExplanation || 'Yes'
-        : 'No',
+      isBoolean: true,
     },
     {
+      key: 'reactionExplanation',
+      question: 'If yes, explain the reaction.',
+    },
+    {
+      key: 'asthma',
       question: 'Do you have or ever had asthma?',
-      answer: medicalHistory.asthma ? 'Yes' : 'No',
+      isBoolean: true,
     },
     {
+      key: 'heartIssues',
       question: 'Do you have or ever had any heart or blood pressure problems?',
-      answer: medicalHistory.heartIssues ? 'Yes' : 'No',
+      isBoolean: true,
     },
     {
+      key: 'heartSurgery',
       question:
-        'Do you have or ever had a replacement or repair of a heart valve, infection of the heart (infective endocarditis), a heart condition from birth (congenital heart disease), or a heart transplant?',
-      answer: medicalHistory.heartSurgery ? 'Yes' : 'No',
+        'Do you have or ever had a replacement or repair of a heart valve, infection of the heart, congenital heart disease, or a heart transplant?',
+      isBoolean: true,
     },
   ];
+
 
   const displayedQuestions = showMore ? questionsAndAnswers : questionsAndAnswers.slice(0, 2);
 
@@ -86,10 +159,8 @@ export default function HistoryPage({ params }) {
       <div className={styles.container}>
         <div className={styles.containerHeader}>
           <h3 className={styles.heading}>Patient History</h3>
-          <button className={styles.editButton}>
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                    </svg>
+          <button className={styles.editButton} onClick={handleEditToggle}>
+            {isEditing ? 'Cancel' : 'Edit'}
           </button>
         </div>
 
@@ -102,15 +173,78 @@ export default function HistoryPage({ params }) {
               {displayedQuestions.map((item, index) => (
                 <div key={index} className={styles.questionAnswer}>
                   <div className={styles.question}>{item.question}</div>
-                  <div className={styles.answer}>{item.answer}</div>
+                  <div className={styles.answer}>
+                    {isEditing ? (
+                      item.isBoolean ? (
+                        <input
+                          type="checkbox"
+                          checked={item.key.includes('.')
+                            ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]] || false
+                            : editableHistory[item.key] || false}
+                          onChange={(e) => {
+                            if (item.key.includes('.')) {
+                              const [mainKey, subKey] = item.key.split('.');
+                              setEditableHistory((prev) => ({
+                                ...prev,
+                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
+                              }));
+                            } else {
+                              handleInputChange(item.key, e.target.checked);
+                            }
+                          }}
+                        />
+                      ) : (
+                        <input
+                          type="text"
+                          value={item.key.includes('.')
+                            ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                            : editableHistory[item.key] || ''}
+                          onChange={(e) => {
+                            if (item.key.includes('.')) {
+                              const [mainKey, subKey] = item.key.split('.');
+                              setEditableHistory((prev) => ({
+                                ...prev,
+                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                              }));
+                            } else {
+                              handleInputChange(item.key, e.target.value);
+                            }
+                          }}
+                          className={styles.input}
+                        />
+                      )
+                    ) : (
+                      <span>
+                        {item.isBoolean
+                          ? (item.key.includes('.')
+                            ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]]
+                            : editableHistory[item.key])
+                            ? 'Yes'
+                            : 'No'
+                          : item.key === 'lastMedicalCheckup' && editableHistory[item.key]
+                            ? formatDate(editableHistory[item.key])
+                            : item.key.includes('.')
+                              ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
+                              : editableHistory[item.key] || 'No information provided.'}
+                      </span>
+                    )}
+                  </div>
+
                 </div>
               ))}
-              <button
-                className={styles.showMoreButton}
-                onClick={() => setShowMore(!showMore)}
-              >
-                {showMore ? 'Show Less' : 'More'}
-              </button>
+              {isEditing && (
+                <button className={styles.saveButton} onClick={handleSave}>
+                  Save
+                </button>
+              )}
+              {!isEditing && (
+                <button
+                  className={styles.showMoreButton}
+                  onClick={() => setShowMore(!showMore)}
+                >
+                  {showMore ? 'Show Less' : 'More'}
+                </button>
+              )}
             </AccordionContent>
           </AccordionItem>
         </Accordion>
