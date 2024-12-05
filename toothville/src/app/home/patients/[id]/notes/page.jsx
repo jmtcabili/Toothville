@@ -139,43 +139,45 @@ export default function page({params}) {
         }else{
             return (
                 <>
-                    <Dialog open = {open}>
+                    <Dialog>
                         <DialogDescription></DialogDescription>
-                        <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-2 py-2 rounded">Add Note</DialogTrigger>
+                        <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-1 py-2 rounded">Add Note</DialogTrigger>
                         <DialogContent className ="bg-gradient-to-br from-white to-white min-h-[600px] flex flex-col justify-start">
                             <DialogHeader>
                             <DialogTitle className>Record a procedure</DialogTitle>
                             <hr />
                             </DialogHeader>
-                            <div className = "flex flex-row items-center gap-2">
-                                <h1 className = "font-medium text-left mb-1">Category: </h1>
-                                <Combobox className = "!w-3/4" setCategory={setCategory}/>
+                            <div className = "flex flex-row items-center justify-between gap-2">
+                                <h1 className = "font-medium text-left mb-1 w-[100px]">Category: </h1>
+                                <Combobox  setCategory={setCategory}/>
                             </div>
-                            <div className = "flex flex-row items-center gap-2">
-                            <h1 className = "font-medium text-left mb-1 w-1/4">Name: </h1>
+                            <div className = "flex flex-row items-center justify-between gap-2">
+                            <h1 className = "font-medium text-left mb-1 w-[100px]">Name: </h1>
                                 <Input
                                     placeholder="Filter by name"
                                     onChange={(e) => setNameFilter(e.target.value)}
-                                    className = "!bg-white text-black w-3/4"
+                                    className = "!bg-white text-black "
                                 >
                                 </Input>
                             </div>
-                            <div className = "flex flex-col gap-1.5 border rounded py-4 px-2 justify-between border-black h-[350px]">
-                                <div className = "flex flex-col gap-1.5 rounded overflow-y-scroll">
+                            <div className = "flex flex-col gap-1.5 rounded py-4  justify-between h-[350px]">
+                                <div className = "flex flex-col gap-1.5 w-full rounded overflow-y-scroll">
                                     {filteredProcedures.map((procedure, index) => {
                                         return(
-                                            <div key = {index} className = "flex flex-row justify-between"
+                                            <div key = {index} className = "flex flex-row w-full py-2 px-2 items-center bg-gray-100  rounded"
                                                 onClick={() => handleProcedureToggle(procedure)}>
-                                                <div className = "flex flex-row gap-2 items-center border-black">
-                                                    <Checkbox 
-                                                        id = {procedure.name}
-                                                        checked = {isChosen(procedure.name)}
-                                                        className = "!border-black !h-6 !w-6"
-                                                    >
-                                                    </Checkbox>
-                                                    {procedure.name}
+                                                <div className = "flex flex-col w-3/4  border-black">
+                                                    <div className = "font-bold">{procedure.name}</div>
+                                                    <div className = "text-sm font-extralight">₱{procedure.price}</div>
                                                 </div>
-                                                ₱{procedure.price}
+                                                <div className = "w-1/4 items-center text-center justify-center">
+                                                    <Checkbox 
+                                                            id = {procedure.name}
+                                                            checked = {isChosen(procedure.name)}
+                                                            className = "!border-black !rounded-full !h-8 !w-8 py-1 dark:data-[state=checked]:bg-nav_blue dark:data-[state=checked]:text-white"
+                                                        >
+                                                    </Checkbox>
+                                                </div>
                                                 
                                             </div>  
                                         )
@@ -310,7 +312,7 @@ export default function page({params}) {
             </svg>
                 <h3>Progress Notes</h3> <br />
             </div>
-            <div id="notes" className = "flex flex-col gap-2 px-2 py-4 mt-2 overflow-scroll max-h-[325px]">
+            <div id="notes" className = "flex flex-col gap-2 px-2 py-4 mt-2 overflow-y-scroll max-h-[325px]">
                 <Accordion type="single" collapsible className="w-full space-y-4">
                     {notes.map((note, index) => {
                         const isUpdating = (index == updatingIdx)
