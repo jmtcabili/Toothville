@@ -36,7 +36,7 @@ export async function GET(request){
 export async function PUT(request){
 
 
-    const {date, procedures, comment} = await request.json(); 
+    const {date, comment} = await request.json(); 
     console.log(date);
     
     //get node id 
@@ -46,10 +46,9 @@ export async function PUT(request){
     const currNote = await notesModel.findById(noteID);
 
     currNote.date = date; 
-    currNote.procedures = procedures;
     currNote.comment = comment;
 
-    //await currNote.save(); 
+    await currNote.save(); 
 
     return NextResponse.json({message: "note updated"}); 
 }

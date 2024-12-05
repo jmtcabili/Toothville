@@ -26,14 +26,8 @@ import {Combobox} from "./Combobox"
 export default function page({params}) {
     const { id }  = params
     const [currDate, setDate] = useState((new Date()).toISOString().split("T")[0]);
-
+    const [notes, setNotes] = useState([]); 
     const [updatingIdx, setIdx] = useState(-1)
-    const formRef = useRef(); 
-    const dateRef = useRef(); 
-    const procedureRef = useRef();
-    const commentsRef = useRef(); 
-
-    
 
     //let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
     //let patient = await response.json()
@@ -42,13 +36,13 @@ export default function page({params}) {
     function handleDateChange(e){
         setDate(e.target.value)
     }
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e, procedures) => {
         e.preventDefault(); 
         const formData = {
             patientID: id, 
-            date: dateRef.current.value, 
-            procedureName: procedureRef.current.value, 
-            comment: commentsRef.current.value
+            date: currDate, 
+            procedures: procedures, 
+            comment: ""
         }
 
         try{
@@ -70,7 +64,6 @@ export default function page({params}) {
         catch (error){
             console.error('req failed', error);
         }
-        formRef.current.reset(); 
     }
 
     const handleUpdate = async (index) =>  {
@@ -188,7 +181,12 @@ export default function page({params}) {
                                     <div id="total_price" className = "overflow-x-auto">Sum: ₱{getSum()}</div>
                                 </div>
                             </div>
-                        {/*on close, clear list */}
+                    
+                         <button className = "w-fill rounded bg-nav_blue py-2 text-white"
+                                 type="submit"
+                                 onClick={(e) => handleSubmit(e, chosenProcedures)}>
+                                    Add procedures
+                        </button>
                         </DialogContent>
                     </Dialog>
                 </>
@@ -197,12 +195,211 @@ export default function page({params}) {
 
        
     }
+
+    function UpdateNote({chosen, setNoteProcedures, id}){
+        const [category, setCategory] = useState("");
+        const [nameFilter, setNameFilter] = useState("");
+        const [procedures, setProcedures] = useState([]);
+        const [chosenProcedures, setChosenProcedures] = useState(chosen);
+        const [open, setOpen] = useState(false);
+
+        
+        useEffect(() => {
+            const fetchProcedures = async() => {
+                let result = await fetch("http://localhost:3000/api/procedure")
+                let procedures = await result.json(); 
+                setProcedures(procedures);
+            }
+            fetchProcedures();
+        }, [])
+        
+        const isChosen = (procedureName) => {
+            return chosenProcedures.some(p => p.name === procedureName);
+        }
+    
+        const handleProcedureToggle = (procedure) => {
+            setChosenProcedures(prev => {
+                const isAlreadyChosen = prev.some(p => p.name === procedure.name);
+                if (isAlreadyChosen) {
+                    return prev.filter(p => p.name !== procedure.name);
+                } else {
+                    return [...prev, procedure];
+                }
+            });
+        }
+
+        const handleProcedureUpdate = async (e, chosenP) => {
+            console.log(chosenP);
+            
+            e.preventDefault();
+            
+            try{
+                const response = await fetch(`http://localhost:3000/api/notes-procedures?_id=${id}`, {
+                    method: "PUT",
+                    headers: {'Content-Type' : 'application/json'},
+                    body: JSON.stringify(
+                        {
+                            procedures: chosenP,
+                        }
+                    ), 
+                })
+                const result = await response.json()
+                if (response.ok){
+                    console.log("note updated", result);
+                    setNoteProcedures(chosenP);
+                    setOpen(false);
+                }else{
+                    console.log("error", result);
+                }
+            }
+            catch (error){
+                console.error("error", error);
+            }
+
+        }
+
+        const getSum = () => {
+            let sum = 0; 
+            chosenProcedures.forEach((procedure) => {
+                sum += procedure.price; 
+            })
+            return sum;
+        }
+
+        const filteredProcedures = procedures
+            .filter((procedure) => procedure.name.toLowerCase().includes(nameFilter.toLowerCase()))
+            .sort((a, b) => {
+                const aIsChosen = isChosen(a.name);
+                const bIsChosen = isChosen(b.name);
+                if (aIsChosen && !bIsChosen) 
+                    return -1; 
+                if (!aIsChosen && bIsChosen) 
+                    return 1;  
+                return 0; 
+            });
+        
+        if (procedures.length == 0){
+            return(<div className="w-full text-center">Loading procedures..</div>)
+        }else{
+            return (
+                <>
+                    <Dialog open={open} onOpenChange={setOpen}>
+                        <DialogDescription></DialogDescription>
+                        <DialogTrigger className = "px-4 py-2 text-white bg-nav_blue rounded-md min-w-[75px]"
+                                       onClick={() => setOpen(true)}>
+                                        Update procedures
+                        </DialogTrigger>
+                        <DialogContent className ="bg-gradient-to-br from-white to-white min-h-[600px] flex flex-col justify-start">
+                            <DialogHeader>
+                            <DialogTitle className>Record a procedure</DialogTitle>
+                            <hr />
+                            </DialogHeader>
+                            <div className = "flex flex-row items-center justify-between gap-2">
+                                <h1 className = "font-medium text-left mb-1 w-[100px]">Category: </h1>
+                                <Combobox  setCategory={setCategory}/>
+                            </div>
+                            <div className = "flex flex-row items-center justify-between gap-2">
+                            <h1 className = "font-medium text-left mb-1 w-[100px]">Name: </h1>
+                                <Input
+                                    placeholder="Filter by name"
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className = "!bg-white text-black "
+                                >
+                                </Input>
+                            </div>
+                            <div className = "flex flex-col gap-1.5 rounded py-4  justify-between h-[350px]">
+                                <div className = "flex flex-col gap-1.5 w-full rounded overflow-y-auto">
+                                    {filteredProcedures.map((procedure, index) => {
+                                        return(
+                                            <div key = {index} className = "flex flex-row w-full py-2 px-2 items-center bg-gray-100  rounded"
+                                                onClick={() => handleProcedureToggle(procedure)}>
+                                                <div className = "flex flex-col w-3/4  border-black">
+                                                    <div className = "font-bold">{procedure.name}</div>
+                                                    <div className = "text-sm font-extralight">₱{procedure.price}</div>
+                                                </div>
+                                                <div className = "w-1/4 items-center text-center justify-center">
+                                                    <Checkbox 
+                                                            id = {procedure.name}
+                                                            checked = {isChosen(procedure.name)}
+                                                            className = "!border-black !rounded-full !h-8 !w-8 py-1 dark:data-[state=checked]:bg-nav_blue dark:data-[state=checked]:text-white"
+                                                        >
+                                                    </Checkbox>
+                                                </div>
+                                                
+                                            </div>  
+                                        )
+                                    })}
+                                </div>
+                                <div className = "flex flex-row justify-between items-center border-t py-1 border-black">
+                                    <div id="total" className = "">Count: {chosenProcedures.length}</div>
+                                    <div id="total_price" className = "overflow-x-auto">Sum: ₱{getSum()}</div>
+                                </div>
+                            </div>
+                        {/*on close, clear list */}
+                         <button className = "w-fill rounded bg-nav_blue py-2 text-white"
+                                 type="submit"
+                                 onClick={(e) => handleProcedureUpdate(e, chosenProcedures)}>
+                                    Edit procedures
+                        </button>
+                        </DialogContent>
+                    </Dialog>
+                </>
+                )
+        }  
+    }
+    
+    function BillingDialog({open, setOpen, procedures}){
+
+        const [discount, setDiscount] = useState("");
+        const discountList = ["None", "Senior Citizen", "PWD"]
+        const getSum = () => {
+            let sum = 0; 
+            procedures.forEach((procedure) => {
+                sum += procedure.price; 
+            })
+            return sum;
+        }
+        return(
+            <>
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogDescription></DialogDescription>
+                    <DialogContent className="!bg-white p-6 rounded shadow-lg max-w-md w-full">
+                    <DialogHeader>
+                        <DialogTitle>Billing Breakdown</DialogTitle>
+                    </DialogHeader>
+                    {procedures ? (
+                        <div>
+                            <h3 className="text-lg font-bold mb-2">Details:</h3>
+                            <ul className="mb-4">
+                                {procedures.map((procedure, index) => (
+                                    <li key={index} className="flex justify-between">
+                                        <span>{procedure.name}</span>
+                                        <span>₱{procedure.price}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className="font-bold text-right">
+                                Total: ₱{getSum()}
+                            </div>
+                        </div>
+                    ) : (
+                        <div>Loading billing details...</div>
+                    )}
+                </DialogContent>
+            </Dialog>
+            </>
+        )
+        
+    }
+
     function NoteComponent({note, index, update}){
 
         const {_id, procedures, date, comment} = note; 
         
         const [noteDate, setNoteDate] = useState((new Date(date)).toISOString().split("T")[0]);
         const [noteComment, setComment] = useState(comment);
+        const [noteProcedures, setNoteProcedures] = useState(procedures);
+        const [isBillingDialogOpen, setBillingDialogOpen] = useState(false);
 
         const handleReset = () =>{
             setNoteDate((new Date(date)).toISOString().split("T")[0]);
@@ -216,7 +413,6 @@ export default function page({params}) {
                     body: JSON.stringify(
                         {
                             date: noteDate,
-                            procedures: procedures,
                             comment: noteComment
                         }
                     ), 
@@ -257,6 +453,7 @@ export default function page({params}) {
                             onClick={async () => {handleUpdate(index); await handleConfirm(); fetchPatientNotes();}}> Confirm </button>
                 <button className="px-2 py-2 text-white bg-red-500 rounded-md min-w-[75px]"
                             onClick={handleReset}> Reset </button>
+                <UpdateNote chosen = {noteProcedures} setNoteProcedures = {setNoteProcedures} id={_id}/>
             </div>
         </>) : 
         (<>
@@ -270,8 +467,10 @@ export default function page({params}) {
             <div className="flex flex-row flex-wrap gap-2 py-2">
                 <button className="px-2 py-2 text-white bg-nav_blue rounded-md min-w-[75px]"
                         onClick={() => handleUpdate(index)}> Edit </button>
-                <button className="px-3 py-2 text-white bg-green-800 rounded-md min-w-[75px]">
+                <button className="px-3 py-2 text-white bg-green-800 rounded-md min-w-[75px]"
+                        onClick = {() => {setBillingDialogOpen(true)}}>
                         View Billing</button>
+                <BillingDialog open={isBillingDialogOpen} setOpen={setBillingDialogOpen} procedures={noteProcedures}/>
                 <button className="px-2 py-2 text-white bg-red-500 rounded-md min-w-[75px]"
                         onClick={async() => { await handleDelete(); fetchPatientNotes();}}> Delete</button>
             </div>
@@ -290,7 +489,7 @@ export default function page({params}) {
         )
     }
 
-    const [notes, setNotes] = useState([]); 
+    
     
     async function fetchPatientNotes(){
         let result = await fetch(`http://localhost:3000/api/notes?patientID=${id}`)
