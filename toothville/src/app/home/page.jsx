@@ -3,6 +3,7 @@
 //next imports
 import Link from 'next/link';
 import Image from 'next/image'; 
+import React, {useState, useEffect} from "react"
 
 //chart imports
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
@@ -36,7 +37,7 @@ const chartData = [
 
 function StatCard({ title, count, iconBgColor, icon: Icon }) {
   return (
-    <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-[48%] md:w-1/4 lg:w-[23%] mx-0 mb-4 md:mb-0">
+    <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-full md:w-1/4 lg:w-[23%] mx-0 mb-4 md:mb-0">
       <div className="flex justify-between items-center p-4">
         <h3 className="text-gray-700 font-semibold">{title}</h3>
         <span className={`p-2 rounded-lg ${iconBgColor}`}>
@@ -139,6 +140,23 @@ function Actions(){
 
 
 export default function Dashboard() {
+
+  const [numPatients, setNumPatients] = React.useState(0);
+  const [earnings, setEarnings] = React.useState(0);
+
+  const getPatients = async() =>{
+    const res_patients = await fetch('http://localhost:3000/api/patient-record')
+    const patients = await res_patients.json()
+
+    const res_earnings = await fetch('http://localhost:3000/api/all-notes')
+    const earning = await res_earnings.json()
+    setNumPatients(patients.length)
+    setEarnings(earning)
+  }
+
+  useEffect(() => {
+    getPatients()
+  }, [])
   return (
     <>
       <div className={styles.dashboard}>
@@ -155,98 +173,26 @@ export default function Dashboard() {
         <div className="flex flex-wrap justify-between gap-1">
           <StatCard 
             title="Total Patients" 
-            count="30" 
+            count={numPatients} 
             iconBgColor="bg-blue-400" 
             icon={UsersIcon} 
           />
           <StatCard 
             title="New Patients" 
-            count="20" 
+            count=""
             iconBgColor="bg-yellow-400" 
             icon={UserPlusIcon} 
           />
-          <StatCard 
-            title="Consultations" 
-            count="$530" 
-            iconBgColor="bg-red-400" 
-            icon={ChatBubbleBottomCenterTextIcon} 
-          />
           <StatCard
             title="Earnings"
-            count="$530"
+            count={`₱${earnings}`} 
             iconBgColor="bg-green-400"
             icon={BanknotesIcon}
           />
         </div>
 
         <Actions/>
-        {/* Chart Box */}
-                {/* Parent container */}
-        
-        <div className="flex flex-col md:flex-row gap-6 w-full mt-6">
-       
-        {/* Chart section */}
-          <Chart />
-
-          <div className="flex flex-col gap-6 w-full md:w-1/3 lg:w-1/4">
-
-            <div className="bg-white p-6 rounded-lg shadow-lg flex flex-col items-center">
-              <h3 className="text-2xl font-semibold text-center">Placeholder</h3>
-              <div className="my-4">
-              <div className="my-4 w-64 h-64 relative">
-                <Image
-                  src="/assets/placeholder.png"
-                  alt="Pie Chart Placeholder"
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded-full"
-                />
-              </div>
-              </div>
-              <div className="flex gap-4 mt-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm">Male</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 bg-yellow-500 rounded-full"></div>
-                  <span className="text-sm">Female</span>
-                </div>
-              </div>
-            </div>          
-
-          </div>
-          
-          <div className="flex flex-col gap-4 w-full md:w-1/2">
-          <div className="relative bg-white p-4 rounded-lg shadow-lg flex flex-col items-start">
-          <span className="absolute top-2 right-2 text-white text-xs font-medium py-1 px-3 rounded-full bg-blue-500">
-            +60%
-          </span>
-          <span className="text-3xl font-bold text-gray-800 mb-1">56</span>
-          <div className="text-gray-500 text-lg">New Patients</div>
-        </div>
-
-        {/* Old Patients Card */}
-        <div className="relative bg-white p-4 rounded-lg shadow-lg flex flex-col items-start">
-          <span className="absolute top-2 right-2 text-white text-xs font-medium py-1 px-3 rounded-full bg-red-500">
-            -20%
-          </span>
-          <span className="text-3xl font-bold text-gray-800 mb-1">35</span>
-          <div className="text-gray-500 text-lg">Old Patients</div>
-        </div>
-
-        {/* Other Patients Card */}
-        <div className="relative bg-white p-4 rounded-lg shadow-lg flex flex-col items-start">
-          <span className="absolute top-2 right-2 text-white text-xs font-medium py-1 px-3 rounded-full bg-blue-500">
-            +50%
-          </span>
-          <span className="text-3xl font-bold text-gray-800 mb-1">45</span>
-          <div className="text-gray-500 text-lg">Other Patients</div>
-        </div>
-        </div>
-        </div>
-      </div>
-                
+      </div>    
     </>
   )
 }
