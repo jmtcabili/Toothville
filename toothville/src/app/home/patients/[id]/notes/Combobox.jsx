@@ -27,12 +27,12 @@ export function Combobox({setCategory}) {
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <PopoverTrigger asChild className="!w-full overflow-x-scroll">
         <Button
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between !text-black !bg-white"
+          className="justify-between !text-black !bg-white"
         >
           {value
             ? categories.find((category) => category.name === value)?.name

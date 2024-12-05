@@ -18,6 +18,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog"
 
+import {Checkbox} from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import {Combobox} from "./Combobox"
   
@@ -97,43 +98,102 @@ export default function page({params}) {
             }
             fetchProcedures();
         }, [])
-
-        const filteredProcedures = procedures.filter((procedure) =>{
-            return procedure.name.toLowerCase().includes(nameFilter.toLowerCase())
-        })
         
-        return (
-        <>
-            <Dialog>
-                <DialogDescription></DialogDescription>
-                <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-2 py-2 rounded">Add Note</DialogTrigger>
-                <DialogContent className ="bg-gradient-to-br from-white to-white min-h-[500px] flex flex-col justify-start">
-                    <DialogHeader>
-                    <DialogTitle className>Record a procedure</DialogTitle>
-                    <hr />
-                    </DialogHeader>
-                    <div>
-                        <h1 className = "font-medium w-full text-left mb-1">Category: </h1>
-                        <Combobox setCategory={setCategory}/>
-                    </div>
-                    <div>
-                    <h1 className = "font-medium w-full text-left mb-1">Name: </h1>
-                        <Input
-                            placeholder="Filter by name"
-                            onChange={(e) => setNameFilter(e.target.value)}
-                            className = "!bg-white text-black"
-                        >
-                        </Input>
-                    </div>
-                    {filteredProcedures.map((procedure, index) => {
-                        return(
-                            <a key = {index}>{procedure.name}</a>
-                        )
-                    })}
-                </DialogContent>
-            </Dialog>
-        </>
-        )
+        const isChosen = (procedureName) => {
+            return chosenProcedures.some(p => p.name === procedureName);
+        }
+    
+        const handleProcedureToggle = (procedure) => {
+            setChosenProcedures(prev => {
+                const isAlreadyChosen = prev.some(p => p.name === procedure.name);
+                if (isAlreadyChosen) {
+                    return prev.filter(p => p.name !== procedure.name);
+                } else {
+                    return [...prev, procedure];
+                }
+            });
+        }
+
+        const getSum = () => {
+            let sum = 0; 
+            chosenProcedures.forEach((procedure) => {
+                sum += procedure.price; 
+            })
+            return sum;
+        }
+
+        const filteredProcedures = procedures
+            .filter((procedure) => procedure.name.toLowerCase().includes(nameFilter.toLowerCase()))
+            .sort((a, b) => {
+                const aIsChosen = isChosen(a.name);
+                const bIsChosen = isChosen(b.name);
+                if (aIsChosen && !bIsChosen) 
+                    return -1; 
+                if (!aIsChosen && bIsChosen) 
+                    return 1;  
+                return 0; 
+            });
+        
+        if (procedures.length == 0){
+            return(<div className="w-full text-center">Loading procedures..</div>)
+        }else{
+            return (
+                <>
+                    <Dialog open = {open}>
+                        <DialogDescription></DialogDescription>
+                        <DialogTrigger className = "bg-nav_blue w-full text-white mt-2 px-2 py-2 rounded">Add Note</DialogTrigger>
+                        <DialogContent className ="bg-gradient-to-br from-white to-white min-h-[600px] flex flex-col justify-start">
+                            <DialogHeader>
+                            <DialogTitle className>Record a procedure</DialogTitle>
+                            <hr />
+                            </DialogHeader>
+                            <div className = "flex flex-row items-center gap-2">
+                                <h1 className = "font-medium text-left mb-1">Category: </h1>
+                                <Combobox className = "!w-3/4" setCategory={setCategory}/>
+                            </div>
+                            <div className = "flex flex-row items-center gap-2">
+                            <h1 className = "font-medium text-left mb-1 w-1/4">Name: </h1>
+                                <Input
+                                    placeholder="Filter by name"
+                                    onChange={(e) => setNameFilter(e.target.value)}
+                                    className = "!bg-white text-black w-3/4"
+                                >
+                                </Input>
+                            </div>
+                            <div className = "flex flex-col gap-1.5 border rounded py-4 px-2 justify-between border-black h-[350px]">
+                                <div className = "flex flex-col gap-1.5 rounded overflow-y-scroll">
+                                    {filteredProcedures.map((procedure, index) => {
+                                        return(
+                                            <div key = {index} className = "flex flex-row justify-between"
+                                                onClick={() => handleProcedureToggle(procedure)}>
+                                                <div className = "flex flex-row gap-2 items-center border-black">
+                                                    <Checkbox 
+                                                        id = {procedure.name}
+                                                        checked = {isChosen(procedure.name)}
+                                                        className = "!border-black !h-6 !w-6"
+                                                    >
+                                                    </Checkbox>
+                                                    {procedure.name}
+                                                </div>
+                                                ₱{procedure.price}
+                                                
+                                            </div>  
+                                        )
+                                    })}
+                                </div>
+                                <div className = "flex flex-row justify-between items-center border-t py-1 border-black">
+                                    <div id="total" className = "">Count: {chosenProcedures.length}</div>
+                                    <div id="total_price" className = "overflow-x-scroll">Sum: ₱{getSum()}</div>
+                                </div>
+                            </div>
+                        {/*on close, clear list */}
+                        </DialogContent>
+                    </Dialog>
+                </>
+                )
+        }
+
+       
     }
     function NoteComponent({note, index, update}){
 
