@@ -25,7 +25,7 @@ export const metadata = {
 };
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={`${anekOdia.variable} bg-nav_gray`}>
+    <html lang="en" className={`${anekOdia.variable} bg-gray-100`}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
