@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import styles from './page.module.css';
 import PatientSummary from '../PatientSummary';
+import { BASE_URL } from '@/utils/constants';
 
 export default function HistoryPage({ params }) {
   const { id } = params;
@@ -14,7 +15,7 @@ export default function HistoryPage({ params }) {
   useEffect(() => {
     async function fetchMedicalHistory() {
       try {
-        const response = await fetch(`/api/medical-history?_id=${id}`);
+        const response = await fetch(`${BASE_URL}/api/medical-history?_id=${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status}`);
         }
@@ -64,7 +65,7 @@ export default function HistoryPage({ params }) {
         preparedData.lastMedicalCheckup = new Date(preparedData.lastMedicalCheckup).toISOString();
       }
 
-      const response = await fetch(`/api/medical-history?_id=${id}`, {
+      const response = await fetch(`${BASE_URL}/api/medical-history?_id=${id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(preparedData),

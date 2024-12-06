@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table"
 import { ProcedureForm } from './Form'
 import { ProcedureModal } from './Modal'
+import { BASE_URL } from '@/utils/constants'
 
 export default function ProcedureList() {
   const [procedures, setProcedures] = useState([])
@@ -22,7 +23,7 @@ export default function ProcedureList() {
 
   useEffect(() => {
     async function fetchProcedures() {
-      let response = await fetch('http://localhost:3000/api/procedure')
+      let response = await fetch(`${BASE_URL}/api/procedure`)
       let data = await response.json()
       setProcedures(data)
     }
@@ -36,7 +37,7 @@ export default function ProcedureList() {
 
   const handleAddProcedure = async(newProcedure) => {
     try{
-      const response = await fetch('http://localhost:3000/api/procedure', {
+      const response = await fetch(`${BASE_URL}/api/procedure`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -54,7 +55,7 @@ export default function ProcedureList() {
 
   const handleEditProcedure = async(updatedProcedure) => {
     try{
-          const response = await fetch(`http://localhost:3000/api/procedure?_id=${updatedProcedure.id}`, {
+          const response = await fetch(`${BASE_URL}/api/procedure?_id=${updatedProcedure.id}`, {
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +84,7 @@ export default function ProcedureList() {
 
   const handleDeleteProcedure = async (id) => {
     try{
-      const response = await fetch(`http://localhost:3000/api/procedure?_id=${id}`, {
+      const response = await fetch(`${BASE_URL}/api/procedure?_id=${id}`, {
         method: 'DELETE',
       })
       setProcedures(procedures.filter((p) => p._id !== id))

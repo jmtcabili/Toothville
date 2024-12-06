@@ -6,6 +6,7 @@ import styles from "./page.module.css";
 import Link from "next/link";
 
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { BASE_URL } from "@/utils/constants";
 
 const Page = () => {
   const [username, setUsername] = useState("");
@@ -25,7 +26,7 @@ const Page = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth/signin", {
+      const res = await fetch(`${BASE_URL}/api/auth/signin`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,6 +57,9 @@ const Page = () => {
     }
   };
 
+  if (!BASE_URL){
+    return null; 
+  }
   return (
     <div className={styles.container}>
       <div className={styles["form-container"]}>
