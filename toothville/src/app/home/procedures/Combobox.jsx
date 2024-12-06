@@ -44,7 +44,7 @@ export function Combobox({setCategory}) {
         <Command className = "!bg-white !text-black w-[300px]">
           <CommandInput placeholder="Search category" className="!text-black"/>
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup >
               {categories.map((category, index) => (
                 <CommandItem

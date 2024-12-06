@@ -116,7 +116,9 @@ export default function page({params}) {
         }
 
         const filteredProcedures = procedures
-            .filter((procedure) => procedure.name.toLowerCase().includes(nameFilter.toLowerCase()))
+            .filter((procedure) => 
+                (procedure.name.toLowerCase().includes(nameFilter.toLowerCase()) && 
+                (procedure.category === category || category === "" || category === "All")))
             .sort((a, b) => {
                 const aIsChosen = isChosen(a.name);
                 const bIsChosen = isChosen(b.name);
