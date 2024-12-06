@@ -25,16 +25,6 @@ const user = {
   "type": "Dentist"
 }
 
-const chartData = [
-  { "day": "Monday", "patients": 23 },
-  { "day": "Tuesday", "patients": 19 },
-  { "day": "Wednesday", "patients": 27 },
-  { "day": "Thursday", "patients": 22 },
-  { "day": "Friday", "patients": 25 },
-  { "day": "Saturday", "patients": 30 },
-  { "day": "Sunday", "patients": 15 }
-]
-
 function StatCard({ title, count, iconBgColor, icon: Icon }) {
   return (
     <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-full md:w-1/4 lg:w-[23%] mx-0 mb-4 md:mb-0">
@@ -140,23 +130,36 @@ function Actions(){
 
 
 export default function Dashboard() {
-
   const [numPatients, setNumPatients] = React.useState(0);
   const [earnings, setEarnings] = React.useState(0);
+  const [newPatients, setNewPatients] = React.useState(0); // State for new patients
 
-  const getPatients = async() =>{
-    const res_patients = await fetch('http://localhost:3000/api/patient-record')
-    const patients = await res_patients.json()
+  const getPatients = async () => {
+    const resPatients = await fetch('http://localhost:3000/api/patient-record');
+    const patients = await resPatients.json();
 
-    const res_earnings = await fetch('http://localhost:3000/api/all-notes')
-    const earning = await res_earnings.json()
-    setNumPatients(patients.length)
-    setEarnings(earning)
-  }
+    const resEarnings = await fetch('http://localhost:3000/api/all-notes');
+    const earning = await resEarnings.json();
+
+    const now = new Date();
+    const pastWeek = new Date();
+    pastWeek.setDate(now.getDate() - 7);
+
+    // Filter patients based on dateRecorded being within the last 7 days
+    const newPatientsCount = patients.filter(patient => {
+      const dateRecorded = new Date(patient.dateRecorded);
+      return dateRecorded >= pastWeek && dateRecorded <= now;
+    }).length;
+
+    setNumPatients(patients.length);
+    setEarnings(earning);
+    setNewPatients(newPatientsCount); // Update state
+  };
 
   useEffect(() => {
-    getPatients()
-  }, [])
+    getPatients();
+  }, []);
+
   return (
     <>
       <div className={styles.dashboard}>
@@ -171,28 +174,28 @@ export default function Dashboard() {
 
         {/* Stat Cards */}
         <div className="flex flex-wrap justify-between gap-1">
-          <StatCard 
-            title="Total Patients" 
-            count={numPatients} 
-            iconBgColor="bg-blue-400" 
-            icon={UsersIcon} 
+          <StatCard
+            title="Total Patients"
+            count={numPatients}
+            iconBgColor="bg-blue-400"
+            icon={UsersIcon}
           />
-          <StatCard 
-            title="New Patients" 
-            count=""
-            iconBgColor="bg-yellow-400" 
-            icon={UserPlusIcon} 
+          <StatCard
+            title="New Patients"
+            count={newPatients} // Use newPatients state
+            iconBgColor="bg-yellow-400"
+            icon={UserPlusIcon}
           />
           <StatCard
             title="Earnings"
-            count={`₱${earnings}`} 
+            count={`₱${earnings}`}
             iconBgColor="bg-green-400"
             icon={BanknotesIcon}
           />
         </div>
 
-        <Actions/>
-      </div>    
+        <Actions />
+      </div>
     </>
-  )
+  );
 }
