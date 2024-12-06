@@ -75,11 +75,11 @@ const patientSchema = new Schema ({
         guardianName: String,
         guardianPhone: String,
     },
-    emergencyContacts: {
+    emergencyContacts:{
             name: String,
             relation: String,
             phone: String,
-    },
+        },
     familyDoctor: {
         name: String,
         phone: String,
@@ -138,6 +138,7 @@ const patientSchema = new Schema ({
             maxlength: 500000,
         },
     },
+    dateRecorded: Date,
     
     //initialize to length 32
 
@@ -173,5 +174,3 @@ export { patientModel};
 export { notesModel };
 export { proceduresModel };
 export default dbConnect
-
-
