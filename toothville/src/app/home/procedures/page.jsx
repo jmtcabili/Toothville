@@ -96,67 +96,83 @@ export default function ProcedureList() {
   }
 
   return (
-    <div className = "py-4 px-2">
-      <div className="mb-4 flex flex-row flex-wrap items-center gap-2 min-h-[70px]">
-        <div id="filter" className = "flex flex-row items-center border rounded border-1 bg-gray-200 max-w-max">
-          <div className = "w-[75px] px-1">Name: </div>
-          <Input
-            type="text"
-            placeholder="enter name"
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            className="max-w-sm !bg-white rounded-none border-none"
-          />
-        </div>
-        <button className="bg-gray-200 py-1 px-4 rounded min-h-[40px]" onClick={() => setIsModalOpen(true)}>Add Procedure</button>
-      </div>
-      <h1 className = "mt-2 font-bold text-lg">List of Procedures</h1>
+    <div className="flex flex-col md:flex-row gap-6 px-6 py-6 lg:mx-20 lg:mt-10">
+  {/* Sidebar: Search and Add Procedure */}
+  <div className="w-full md:w-1/3">
+    <h2 className="text-xl font-bold mb-4">Filters</h2>
+    <div className="bg-white border border-gray-300 rounded-lg p-4">
+      <label htmlFor="filter" className="block text-sm font-semibold mb-2">
+        Name
+      </label>
+      <Input
+        id="filter"
+        type="text"
+        placeholder="Enter name"
+        value={filter}
+        onChange={(e) => setFilter(e.target.value)}
+        className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-300 !bg-white"
+      />
+    </div>
+    <button
+      className="mt-4 bg-gray-300 py-3 px-4 rounded-lg shadow-sm hover:bg-gray-300 transition-all w-full"
+      onClick={() => setIsModalOpen(true)}
+    >
+      Add Procedure
+    </button>
+  </div>
+
+  {/* Table Section */}
+  <div className="w-full md:w-2/3">
+    <h2 className="text-xl font-bold mb-4">List of Procedures</h2>
+    <div className="bg-white border border-gray-300 rounded-lg p-4 shadow-md">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Name</TableHead>
-            <TableHead>Price</TableHead>
-            <TableHead>Category</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead className="font-bold">Name</TableHead>
+            <TableHead className="font-bold">Price</TableHead>
+            <TableHead className="font-bold">Category</TableHead>
+            <TableHead className="font-bold">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {filteredProcedures.map((procedure, index) => {
-              return(
-                <TableRow key={index}>
-                  <TableCell>{procedure.name}</TableCell>
-                  <TableCell>₱{procedure.price}</TableCell>
-                  <TableCell>{procedure.category}</TableCell>
-                  <TableCell>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedProcedure(procedure)
-                        setIsModalOpen(true)
-                      }}
-                      className = "!bg-green-800 text-white"
-                    >
-                      Edit
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              )
-          })}
+          {filteredProcedures.map((procedure, index) => (
+            <TableRow key={index}>
+              <TableCell>{procedure.name}</TableCell>
+              <TableCell>₱{procedure.price}</TableCell>
+              <TableCell>{procedure.category}</TableCell>
+              <TableCell>
+                <Button
+                  variant="solid"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedProcedure(procedure);
+                    setIsModalOpen(true);
+                  }}
+                  className="!bg-green-800 text-white hover:!bg-green-900 rounded px-4 font-semibold"
+                >
+                  Edit
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
-
-      <ProcedureModal
-        isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false)
-          setSelectedProcedure(null)
-        }}
-        procedure={selectedProcedure}
-        onSave={selectedProcedure ? handleEditProcedure : handleAddProcedure}
-        onDelete={handleDeleteProcedure}
-      />
     </div>
+  </div>
+
+  {/* Procedure Modal */}
+  <ProcedureModal
+    isOpen={isModalOpen}
+    onClose={() => {
+      setIsModalOpen(false);
+      setSelectedProcedure(null);
+    }}
+    procedure={selectedProcedure}
+    onSave={selectedProcedure ? handleEditProcedure : handleAddProcedure}
+    onDelete={handleDeleteProcedure}
+  />
+</div>
+
   )
 }
 
