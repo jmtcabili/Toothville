@@ -75,12 +75,11 @@ const patientSchema = new Schema ({
         guardianName: String,
         guardianPhone: String,
     },
-    emergencyContacts:[ {
+    emergencyContacts: {
             name: String,
             relation: String,
             phone: String,
-        },
-    ],
+    },
     familyDoctor: {
         name: String,
         phone: String,
