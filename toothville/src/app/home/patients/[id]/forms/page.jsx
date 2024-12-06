@@ -46,17 +46,17 @@ export default function ViewForms({ params }) {
                     },
                     emergencyContacts: {
                         name: data.emergencyContacts?.name || '',
-                        relationship: data.emergencyContacts?.relation || '',
-                        phoneNumber: data.emergencyContacts?.phone || '',
+                        relation: data.emergencyContacts?.relation || '',
+                        phone: data.emergencyContacts?.phone || '',
                     },
                     familyDoctor: {
                         name: data.familyDoctor?.name || '',
-                        phoneNumber: data.familyDoctor?.phone || '',
+                        phone: data.familyDoctor?.phone || '',
                         address: data.familyDoctor?.address || '',
                     },
                     specialist: {
                         name: data.specialist?.name || '',
-                        phoneNumber: data.specialist?.phone || '',
+                        phone: data.specialist?.phone || '',
                         address: data.specialist?.address || '',
                     },
                     pharmacy: {
@@ -213,20 +213,18 @@ export default function ViewForms({ params }) {
         },
     ];
 
-    const emergencyContact = patientData?.emergencyContacts?.[0] || {};
-
     const emergencyInfo = [
         {
             question: 'Name',
-            answer: emergencyContact.name || 'No information provided.',
+            key: 'emergencyContacts.name',
         },
         {
             question: 'Relationship',
-            answer: emergencyContact.relation || 'No information provided.',
+            key: 'emergencyContacts.relation',
         },
         {
             question: 'Contact Number',
-            answer: emergencyContact.phone || 'No information provided.',
+            key: 'emergencyContacts.phone',
         },
     ];
 
@@ -510,12 +508,76 @@ export default function ViewForms({ params }) {
                                 <span>Emergency Contact</span>
                             </AccordionTrigger>
                             <AccordionContent className={styles.accordionContent}>
-                            {displayedEmergencyInfo.map((item, index) => (
-                                <div key={index} className={styles.questionAnswer}>
+                                {displayedEmergencyInfo.map((item, index) => (
+                                    <div key={index} className={styles.questionAnswer}>
                                     <div className={styles.question}>{item.question}</div>
-                                    <div className={styles.answer}>{item.answer}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <input
+                                                    type="checkbox"
+                                                    checked={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || false
+                                                        : editableData[item.key] || false}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.checked);
+                                                        }
+                                                    }}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key.includes('.')
+                                                    ? editableData[item.key.split('.')[0]]?.[item.key.split('.')[1]] || 'No information provided.'
+                                                    : editableData[item.key] || 'No information provided.'
+                                                }
+
+                                            </span>
+                                        )}
+                                    </div>
                                 </div>
                             ))}
+
+                            {!isEditing && (
+                                <button
+                                    className={styles.showMoreButton}
+                                    onClick={() => setShowMore(!showMore)}
+                                >
+                                    {showMore ? 'Show Less' : 'More'}
+                                </button>
+                            )}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
