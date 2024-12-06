@@ -18,7 +18,12 @@ export default function Navbar() {
   const handleSignOut = () => {
     router.push('/signout'); 
   };
-  
+  let username  = ""
+  if (localStorage.getItem('user') == null) {
+     username = "User"
+  }else{
+    username = localStorage.getItem('user')
+  }
   
 
   return (
@@ -158,7 +163,7 @@ export default function Navbar() {
               className="rounded-full border-2 border-white h-10"
             />
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-lg ">Dr. Michelle Lajara</span>
+              <span className="font-semibold text-lg ">Dr.{username} </span>
               <span className="text-sm font-light">Head Dentist</span>
             </div>
           </>
