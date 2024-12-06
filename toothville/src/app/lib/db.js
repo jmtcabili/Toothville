@@ -75,8 +75,7 @@ const patientSchema = new Schema ({
         guardianName: String,
         guardianPhone: String,
     },
-    emergencyContacts: [
-        {
+    emergencyContacts:[ {
             name: String,
             relation: String,
             phone: String,
@@ -132,7 +131,7 @@ const patientSchema = new Schema ({
         patientSignature: {
             type: String,
             required: true,
-            maxlength: 500000, // Adjust this based on the expected size of the Base64 string
+            maxlength: 500000,
         },
         dentistSignature: {
             type: String,
