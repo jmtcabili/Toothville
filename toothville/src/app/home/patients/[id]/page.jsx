@@ -18,6 +18,8 @@ export default async function PatientDetails({params}){
 
     return (
     <>
+    <div className='flex justify-center items-center min-h-screen lg:mx-20 lg:mt-10'>
+        <div className='w-full'>
         <PatientSummary params = {params}></PatientSummary>
         <div id="bio" className='bg-white px-3 py-3 mb-4 rounded'>
             <h2 className='font-bold mb-2'>Bio</h2>
@@ -64,6 +66,8 @@ export default async function PatientDetails({params}){
                     </svg>
                     <Link className = "underline" href = {`${path}/forms`}>Forms</Link>
             </div>
+        </div>
+        </div>
         </div>
     
     </>
