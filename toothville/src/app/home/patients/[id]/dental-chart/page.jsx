@@ -14,6 +14,7 @@ import {
     DialogTrigger,
   } from "@/components/ui/dialog"
 import { Filter } from 'lucide-react'
+import { BASE_URL } from '@/utils/constants'
   
   const statuses = [
     "Normal",
@@ -59,7 +60,7 @@ export default function dentalChart({params}) {
     
     useEffect(() => {
         async function fetchChart(){
-            let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
+            let response = await fetch(`${BASE_URL}/api/patient-find?_id=${id}`)
             let patient = await response.json()   
             setChart(patient.dentalChart)
         }
@@ -80,7 +81,7 @@ export default function dentalChart({params}) {
         
          
         try{
-            let response = await fetch (`http://localhost:3000/api/dental-chart?_id=${id}`, {
+            let response = await fetch (`${BASE_URL}/api/dental-chart?_id=${id}`, {
                 method: "PUT",
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(

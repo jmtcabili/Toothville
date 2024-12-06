@@ -1,4 +1,5 @@
 
+import { BASE_URL } from '@/utils/constants'
 import PatientSummary from './PatientSummary'
 import Link from 'next/link'
 
@@ -7,7 +8,7 @@ export default async function PatientDetails({params}){
     const { id }  = params
     const path = `/home/patients/${id}`
   
-    let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
+    let response = await fetch(`${BASE_URL}/api/patient-find?_id=${id}`)
     let patient = await response.json()
 
     const getAge = (patient) => {
