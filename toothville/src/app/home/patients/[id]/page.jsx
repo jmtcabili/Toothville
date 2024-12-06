@@ -18,7 +18,7 @@ export default async function PatientDetails({params}){
 
     return (
     <>
-    <div className='flex justify-center items-center min-h-screen lg:mx-20 lg:mt-10'>
+    <div className='flex justify-center min-h-screen lg:mx-20 lg:mt-10 mt-0'>
         <div className='w-full'>
         <PatientSummary params = {params}></PatientSummary>
         <div id="bio" className='bg-white px-3 py-3 mb-4 rounded'>
