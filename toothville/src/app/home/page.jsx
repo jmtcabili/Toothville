@@ -165,7 +165,7 @@ export default function Dashboard() {
     const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
     setCurrentDate(date.toLocaleDateString(undefined, options));
   }, []);
-  
+
   return (
     <>
       <div className={styles.dashboard}>
@@ -179,7 +179,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stat Cards */}
-        <div className="flex flex-wrap justify-between gap-1">
+        <div className="flex flex-wrap justify-center gap-6">
           <StatCard 
             title="Total Patients" 
             count={numPatients} 
