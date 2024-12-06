@@ -23,7 +23,7 @@ import categories from "@/app/home/procedures/categories.json"
 
 export function Combobox({setCategory}) {
   const [open, setOpen] = React.useState(false)
-  const [value, setValue] = React.useState("")
+  const [value, setValue] = React.useState("Filter by category")
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -34,9 +34,7 @@ export function Combobox({setCategory}) {
           aria-expanded={open}
           className="justify-between !text-black !bg-white"
         >
-          {value
-            ? categories.find((category) => category.name === value)?.name
-            : "Select category"}
+          {value}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -44,8 +42,19 @@ export function Combobox({setCategory}) {
         <Command className = "!bg-white !text-black w-[300px]">
           <CommandInput placeholder="Search category" className="!text-black"/>
           <CommandList className = "!max-h-[200px] overflow-y-auto">
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No category found.</CommandEmpty>
             <CommandGroup className="overflow-y-auto">
+              <CommandItem
+                  value={"All"}
+                  onSelect={(currentValue) => {
+                    setValue("All")
+                    setOpen(false)
+                    setCategory(currentValue)
+                  }}
+                  className = "!text-black  dark:data-[selected='true']:bg-gray-400 dark:data-[selected=true]:text-slate-50"
+                >
+                  All
+              </CommandItem>
               {categories.map((category, index) => (
                 <CommandItem
                   key={index}
