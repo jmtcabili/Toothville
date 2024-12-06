@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import styles from './page.module.css';
 import PatientSummary from '../PatientSummary';
+import { BASE_URL } from '@/utils/constants';
 
 export default function ViewForms({ params }) {
     const { id } = params;
@@ -14,7 +15,7 @@ export default function ViewForms({ params }) {
     useEffect(() => {
         async function fetchPatientData() {
             try {
-                const response = await fetch(`/api/forms?_id=${id}`);
+                const response = await fetch(`${BASE_URL}/api/forms?_id=${id}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
@@ -102,7 +103,7 @@ export default function ViewForms({ params }) {
                 preparedData.personalInformation.dob = new Date(preparedData.personalInformation.dob).toISOString();
             }
 
-            const response = await fetch(`/api/forms?_id=${id}`, {
+            const response = await fetch(`${BASE_URL}/api/forms?_id=${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(preparedData),

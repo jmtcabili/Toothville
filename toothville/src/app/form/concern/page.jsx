@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import { IoArrowBack, IoPersonCircle } from "react-icons/io5";
 import SignatureModal from "@/components/ui/SignatureModal";
+import { BASE_URL } from "@/utils/constants";
 
 const formSchema = z.object({
     concern: z.string().max(50, "Concern must be 50 characters or less").optional(),
@@ -155,7 +156,7 @@ export default function SubmissionForm() {
         };
 
         try {
-            const response = await fetch('/api/patient-record', {
+            const response = await fetch(`${BASE_URL}/api/patient-record`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

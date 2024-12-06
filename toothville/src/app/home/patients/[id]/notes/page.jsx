@@ -21,6 +21,7 @@ import {
 import {Checkbox} from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import {Combobox} from "./Combobox"
+import { BASE_URL } from "@/utils/constants"
   
 
 export default function page({params}) {
@@ -46,7 +47,7 @@ export default function page({params}) {
         }
 
         try{
-            const response = await fetch("http://localhost:3000/api/notes",{
+            const response = await fetch(`${BASE_URL}/api/notes`,{
                 method: 'POST',
                 headers: {'Content-Type' : 'application/json'},
                 body: JSON.stringify(formData), 
@@ -85,7 +86,7 @@ export default function page({params}) {
 
         useEffect(() => {
             const fetchProcedures = async() => {
-                let result = await fetch("http://localhost:3000/api/procedure")
+                let result = await fetch(`${BASE_URL}/api/procedure`)
                 let procedures = await result.json(); 
                 setProcedures(procedures);
             }
@@ -208,7 +209,7 @@ export default function page({params}) {
         
         useEffect(() => {
             const fetchProcedures = async() => {
-                let result = await fetch("http://localhost:3000/api/procedure")
+                let result = await fetch(`${BASE_URL}/api/procedure`)
                 let procedures = await result.json(); 
                 setProcedures(procedures);
             }
@@ -236,7 +237,7 @@ export default function page({params}) {
             e.preventDefault();
             
             try{
-                const response = await fetch(`http://localhost:3000/api/notes-procedures?_id=${id}`, {
+                const response = await fetch(`${BASE_URL}/api/notes-procedures?_id=${id}`, {
                     method: "PUT",
                     headers: {'Content-Type' : 'application/json'},
                     body: JSON.stringify(
@@ -409,7 +410,7 @@ export default function page({params}) {
         }
         const handleConfirm = async() =>{
             try{
-                const response = await fetch(`http://localhost:3000/api/notes?_id=${_id}`, {
+                const response = await fetch(`${BASE_URL}/api/notes?_id=${_id}`, {
                     method: "PUT",
                     headers: {'Content-Type' : 'application/json'},
                     body: JSON.stringify(
@@ -432,7 +433,7 @@ export default function page({params}) {
         }
         const handleDelete = async() => {
             try{
-                const response = await fetch(`http://localhost:3000/api/notes?_id=${_id}`, {method: "DELETE"})
+                const response = await fetch(`${BASE_URL}/api/notes?_id=${_id}`, {method: "DELETE"})
                 const result = await response.json()
                 if (response.ok){
                     console.log("note deleted: ", result)
@@ -494,7 +495,7 @@ export default function page({params}) {
     
     
     async function fetchPatientNotes(){
-        let result = await fetch(`http://localhost:3000/api/notes?patientID=${id}`)
+        let result = await fetch(`${BASE_URL}/api/notes?patientID=${id}`)
         let patientNotes = await result.json(); 
         setNotes(patientNotes); 
     }

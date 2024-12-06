@@ -6,6 +6,7 @@ import styles from "../../page.module.css";
 import Link from "next/link";
 
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+import { BASE_URL } from "@/utils/constants";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");
@@ -35,7 +36,7 @@ const SignUp = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch("/api/auth/signup", {
+      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,5 +1,6 @@
 "use client"
 
+import { BASE_URL } from '@/utils/constants';
 //transfer to layout
 import {useState, useEffect} from 'react'
 
@@ -11,7 +12,7 @@ export default function PatientSummary({params}) {
 
     useEffect(() => {
         async function fetchPatient() {
-            let response = await fetch(`http://localhost:3000/api/patient-find?_id=${id}`)
+            let response = await fetch(`${BASE_URL}/api/patient-find?_id=${id}`)
             let data = await response.json()
             setPatient(data); 
         }        
