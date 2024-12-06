@@ -111,3 +111,45 @@
   color: #888;
   text-align: center;
 }
+
+.input {
+  width: 100%; 
+  height: 26px;
+  padding: 8px; 
+  border: 1px solid #ccc; 
+  border-radius: 4px; 
+  outline: none; 
+  transition: border-color 0.3s ease; 
+}
+
+.input:focus {
+  border-color: #007bff; 
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+
+.checkboxWrapper {
+  display: flex;
+  align-items: center; 
+  gap: 8px; 
+}
+
+.checkboxInput {
+  width: 16px; 
+  height: 16px;
+  cursor: pointer; 
+  margin: 0; 
+}
+
+.checkboxLabel {
+  font-size: 14px; 
+  color: #333;
+}
+
+.dateInput {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 14px;
+}

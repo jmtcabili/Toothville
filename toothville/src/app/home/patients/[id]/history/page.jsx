@@ -177,22 +177,43 @@ export default function HistoryPage({ params }) {
                   <div className={styles.answer}>
                     {isEditing ? (
                       item.isBoolean ? (
+                        <div className={styles.checkboxWrapper}>
+                          <input
+                            type="checkbox"
+                            checked={item.key.includes('.')
+                              ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]] || false
+                              : editableHistory[item.key] || false}
+                            onChange={(e) => {
+                              if (item.key.includes('.')) {
+                                const [mainKey, subKey] = item.key.split('.');
+                                setEditableHistory((prev) => ({
+                                  ...prev,
+                                  [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
+                                }));
+                              } else {
+                                handleInputChange(item.key, e.target.checked);
+                              }
+                            }}
+                            className={styles.checkboxInput}
+                          />
+                          <label className={styles.checkboxLabel}>
+                            {editableHistory[item.key.includes('.')
+                              ? item.key.split('.')[0]
+                              : item.key]
+                              ? 'Yes'
+                              : 'No'}
+                          </label>
+                        </div>
+                      ) : item.key === 'lastMedicalCheckup' ? (
                         <input
-                          type="checkbox"
-                          checked={item.key.includes('.')
-                            ? editableHistory[item.key.split('.')[0]][item.key.split('.')[1]] || false
-                            : editableHistory[item.key] || false}
-                          onChange={(e) => {
-                            if (item.key.includes('.')) {
-                              const [mainKey, subKey] = item.key.split('.');
-                              setEditableHistory((prev) => ({
-                                ...prev,
-                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
-                              }));
-                            } else {
-                              handleInputChange(item.key, e.target.checked);
-                            }
-                          }}
+                          type="date"
+                          value={
+                            editableHistory[item.key]
+                              ? new Date(editableHistory[item.key]).toISOString().split('T')[0]
+                              : ''
+                          }
+                          onChange={(e) => handleInputChange(item.key, e.target.value)}
+                          className={styles.dateInput}
                         />
                       ) : (
                         <input
@@ -230,7 +251,6 @@ export default function HistoryPage({ params }) {
                       </span>
                     )}
                   </div>
-
                 </div>
               ))}
               {isEditing && (
@@ -252,4 +272,5 @@ export default function HistoryPage({ params }) {
       </div>
     </>
   );
+
 }
