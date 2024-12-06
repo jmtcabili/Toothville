@@ -88,7 +88,7 @@ function Actions(){
   return (
     <>
     <div className="w-full flex flex-wrap justify-center">
-        <div className="grid grid-cols-2 w-10/12 rounded-lg shadow-lg mt-6 gap-2 px-4 py-6 mb-2 bg-white ">
+        <div className="grid grid-cols-2 lg:w-10/12 w-full rounded-lg shadow-lg lg:mt-6  mt-4 gap-2 px-4 py-6 mb-2 bg-white ">
             
             <div className="col-span-2">
               <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-[#0487D5] text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
@@ -105,7 +105,7 @@ function Actions(){
             <div id = "action2" className="">
                 <div className="flex flex-col gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 w-full h-20 rounded">
                     <div id="details" className="flex flex-col">
-                        <div className="font-bold text-lg text-white">
+                        <div className="font-bold lg:text-lg text-white lg:px-0 px-7 text-center">
                             <Link href='/home/patients'>View patients</Link>
                         </div>
                     </div>
@@ -116,7 +116,7 @@ function Actions(){
           <div id = "action3" className="">
           <div className="flex flex-row gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 h-20 w-full rounded">
               <div id="details" className="flex flex-col">
-                <div className="font-bold text-white text-lg text-center">
+                <div className="font-bold text-white lg:text-lg text-center">
                     <Link href = "/home/procedures">Manage Procedures</Link>
                 </div>
               </div>
@@ -179,7 +179,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stat Cards */}
-        <div className="flex flex-wrap justify-center gap-6">
+        <div className="flex flex-wrap justify-center gap-1 md:gap-2 lg:gap-6">
           <StatCard 
             title="Total Patients" 
             count={numPatients} 
