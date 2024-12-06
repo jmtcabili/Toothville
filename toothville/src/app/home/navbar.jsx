@@ -28,16 +28,10 @@ export default function Navbar() {
           <span>Home</span>
         </div>
         <div className={styles['nav-item']}>
-          <span>Appointments</span>
+          <span>Procedures</span>
         </div>
         <div className={styles['nav-item']}>
           <span>Patients</span>
-        </div>
-        <div className={styles['nav-item']}>
-          <span>Analytics</span>
-        </div>
-        <div className={styles['nav-item-profile']}>
-          <span>Profile</span>
         </div>
       </div>
 
@@ -51,8 +45,8 @@ export default function Navbar() {
       </button>
 
       {/* Profile */}
-      <div className="hidden md:flex items-center gap-2 p-2 rounded-full bg-white text-gray-700 shadow-lg cursor-pointer hover:bg-gray-200">
-        <img src="/assets/defaultpfp.webp" alt="Profile Picture" className="rounded-full border-2 border-white h-10" />
+      <div className="hidden md:flex items-center gap-2 p-3 rounded-full bg-white text-gray-700 shadow-lg">
+        <img src="/assets/defaultpfp.png" alt="Profile Picture" className="rounded-full border-2 border-white h-10" />
         <div className="flex flex-col items-start">
           <span className="font-semibold text-lg">Dr. Michelle Lajara</span>
           <span className="text-sm font-light">Head Dentist</span>

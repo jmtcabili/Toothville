@@ -5,10 +5,13 @@ import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import Link from "next/link";
 
+import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
+
 const Page = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [inputError, setInputError] = useState({ username: false, password: false });
   const [showGreeting, setShowGreeting] = useState(false);
   const router = useRouter();
 
@@ -31,12 +34,25 @@ const Page = () => {
       });
 
       if (res.ok) {
+        setInputError({ username: false, password: false });
         router.push("/home");
       } else {
         setError("Invalid username or password");
+        setInputError({ username: true, password: true });
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
+      setInputError({ username: true, password: true });
+    }
+  };
+
+  const handleInputChange = (field, value) => {
+    if (field === "username") {
+      setUsername(value);
+      setInputError((prev) => ({ ...prev, username: false })); // Reset username error
+    } else if (field === "password") {
+      setPassword(value);
+      setInputError((prev) => ({ ...prev, password: false })); // Reset password error
     }
   };
 
@@ -55,6 +71,14 @@ const Page = () => {
         <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
           Enter account details to log in!
         </div>
+
+        {error && (
+            <div className={styles.error}>
+              <ExclamationCircleIcon className={styles.errorIcon} />
+              {error}
+            </div>
+          )}
+          
         <form className={styles.form} onSubmit={handleSignIn}>
           <div className={styles.inputGroup}>
             <label htmlFor="username">Username</label>
@@ -62,7 +86,8 @@ const Page = () => {
               type="text"
               id="username"
               value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              onChange={(e) => handleInputChange("username", e.target.value)}
+              className={`${styles.inputField} ${inputError.username ? styles.errorInput : ""}`}
               required
             />
           </div>
@@ -73,12 +98,11 @@ const Page = () => {
               type="password"
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => handleInputChange("password", e.target.value)}
+              className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
               required
             />
           </div>
-
-          {error && <p className={styles.error}>{error}</p>}
 
           <button
             type="submit"

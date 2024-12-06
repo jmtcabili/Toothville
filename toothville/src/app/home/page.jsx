@@ -37,7 +37,7 @@ const chartData = [
 
 function StatCard({ title, count, iconBgColor, icon: Icon }) {
   return (
-    <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-full md:w-1/4 lg:w-[23%] mx-0 mb-4 md:mb-0">
+    <div className="flex flex-col justify-between rounded-lg shadow-lg bg-white w-full md:w-1/4 lg:w-[26%] mx-0 mb-4 md:mb-0">
       <div className="flex justify-between items-center p-4">
         <h3 className="text-gray-700 font-semibold">{title}</h3>
         <span className={`p-2 rounded-lg ${iconBgColor}`}>
@@ -97,15 +97,16 @@ function Profile(){
 function Actions(){
   return (
     <>
-        <div className="grid grid-cols-2 w-full rounded-lg shadow-lg mt-2 gap-2 px-2 py-4 mb-2">
+    <div className="w-full flex flex-wrap justify-center">
+        <div className="grid grid-cols-2 w-10/12 rounded-lg shadow-lg mt-6 gap-2 px-4 py-6 mb-2 bg-white ">
             
             <div className="col-span-2">
-              <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-blue-500 text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
+              <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-[#0487D5] text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="size-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                   </svg>
                   <div id="details" className="flex flex-col justify-center">
-                      <Link href = "../form/personal-information" className='font-bold'>Add Patient</Link>
+                      <Link href = "../form/personal-information" className='font-bold text-xl'>Add Patient</Link>
                   </div>
               </div>
             </div>
@@ -114,7 +115,7 @@ function Actions(){
             <div id = "action2" className="">
                 <div className="flex flex-col gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 w-full h-20 rounded">
                     <div id="details" className="flex flex-col">
-                        <div className="font-bold text-sm text-white">
+                        <div className="font-bold text-lg text-white">
                             <Link href='/home/patients'>View patients</Link>
                         </div>
                     </div>
@@ -125,13 +126,14 @@ function Actions(){
           <div id = "action3" className="">
           <div className="flex flex-row gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 h-20 w-full rounded">
               <div id="details" className="flex flex-col">
-                <div className="font-bold text-white text-sm text-center">
+                <div className="font-bold text-white text-lg text-center">
                     <Link href = "/home/procedures">Manage Procedures</Link>
                 </div>
               </div>
             </div>
           </div>
         </div>    
+        </div>
     </>
   )
   
@@ -143,6 +145,7 @@ export default function Dashboard() {
 
   const [numPatients, setNumPatients] = React.useState(0);
   const [earnings, setEarnings] = React.useState(0);
+  const [currentDate, setCurrentDate] = useState("");
 
   const getPatients = async() =>{
     const res_patients = await fetch('http://localhost:3000/api/patient-record')
@@ -155,7 +158,10 @@ export default function Dashboard() {
   }
 
   useEffect(() => {
-    getPatients()
+    getPatients();
+    const date = new Date();
+    const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    setCurrentDate(date.toLocaleDateString(undefined, options));
   }, [])
   return (
     <>
@@ -165,12 +171,12 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <div className={styles.welcomeSection}>
           <h2>Good Morning, Dr. Michelle Lajara</h2>
-          <p className={styles.subText}>Today is Tuesday, November 12, 2024.</p>
-          <button className={styles.appointmentsButton}>See Today's Appointments</button>
+          <p className={styles.subText}>Today is {currentDate}.</p>
+          <button className={styles.appointmentsButton}>See Patients</button>
         </div>
 
         {/* Stat Cards */}
-        <div className="flex flex-wrap justify-between gap-1">
+        <div className="flex flex-wrap justify-center gap-7 w-full">
           <StatCard 
             title="Total Patients" 
             count={numPatients} 
