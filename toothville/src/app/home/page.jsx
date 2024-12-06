@@ -22,9 +22,11 @@ const chartConfig = {
 } 
 
 const user = {
-  "name": "Dr. Michelle Lajara",
+  "name": localStorage.getItem("user"),
   "type": "Dentist"
 }
+
+
 
 function StatCard({ title, count, iconBgColor, icon: Icon }) {
   return (
@@ -174,7 +176,7 @@ export default function Dashboard() {
 
         {/* Welcome Section */}
         <div className={styles.welcomeSection}>
-          <h2>Good Morning, Dr. Michelle Lajara</h2>
+          <h2>Good Morning, Dr. {user.name}</h2>
           <p className={styles.subText}>Today is {currentDate}.</p>
           <button className={styles.appointmentsButton}>See Patients</button>
         </div>
