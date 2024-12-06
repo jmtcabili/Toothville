@@ -18,6 +18,7 @@ export async function POST(request) {
 					concern,
 					signatures,
 					dentist,
+					dateRecorded,
 	} = await request.json()
 
 	let dentalChart = {
@@ -120,7 +121,8 @@ export async function POST(request) {
 			concern: concern,
 			signatures: signatures,
 			dentist: dentist,
-			dentalChart: dentalChart
+			dentalChart: dentalChart,
+			dateRecorded: dateRecorded,
 	});
 	
 	await tempPatient.save() 

@@ -70,6 +70,7 @@ export default function SubmissionForm() {
 
         const formData = sessionStorage.getItem("formData");
         const parsedData = JSON.parse(formData);
+        const currentDate = new Date();
 
         const patientData = {
             personalInformation: {
@@ -150,6 +151,7 @@ export default function SubmissionForm() {
                 patientSignature: data.signatures.patientSignature,
                 dentistSignature: data.signatures.dentistSignature,
             },
+            dateRecorded: currentDate,
         };
 
         try {
@@ -258,7 +260,7 @@ export default function SubmissionForm() {
                 onSave={(signature) => {
                     sessionStorage.setItem("patientSignature", signature);
                     setPatientSignature(signature);
-                    form.setValue("signatures.patientSignature", signature); // Updates the form state
+                    form.setValue("signatures.patientSignature", signature); 
                 }}
                 title="Patient's Signature"
             />
@@ -268,7 +270,7 @@ export default function SubmissionForm() {
                 onSave={(signature) => {
                     sessionStorage.setItem("dentistSignature", signature);
                     setDentistSignature(signature);
-                    form.setValue("signatures.dentistSignature", signature); // Updates the form state
+                    form.setValue("signatures.dentistSignature", signature); 
                 }}
                 title="Dentist's Signature"
             />
