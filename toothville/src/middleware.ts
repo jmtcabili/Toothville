@@ -10,13 +10,18 @@ export function middleware(request) {
     return response;
   }
 
-  // Protect other routes
   const token = request.cookies.get('token');
-  if (!token && pathname.startsWith('/home')) {
-    return NextResponse.redirect(new URL('/', request.url)); // Redirect unauthenticated users
+
+  // Routes requiring authentication
+  const protectedRoutes = ['/home', '/dashboard', '/form'];
+
+  // redirect unauthenticated trying to access protected
+  const isProtected = protectedRoutes.some((route) => pathname.startsWith(route));
+  if (isProtected && !token) {
+    return NextResponse.redirect(new URL('/', request.url)); // redirect to sign-in page if not authenticated
   }
 
-  return NextResponse.next(); 
+  return NextResponse.next(); // allow access for authenticated users
 }
 
 export const config = {
