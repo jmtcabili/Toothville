@@ -95,7 +95,11 @@ export default function SubmissionForm() {
                 guardianName: parsedData.guardianName,
                 guardianPhone: parsedData.guardianPhone,
             },
-            emergencyContacts: JSON.parse(sessionStorage.getItem('emergencyContacts')) || [],
+            emergencyContacts: {
+                name: parsedData.emergencyContactName,
+                relation: parsedData.relationship,
+                phone: parsedData.emergencyContactPhone,
+            },
             familyDoctor: {
                 name: parsedData.familyDoctor,
                 phone: parsedData.familyDoctorPhone,
