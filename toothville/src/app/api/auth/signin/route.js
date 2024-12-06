@@ -3,7 +3,7 @@ import User from "@/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const JWT_SECRET = process.env.JWT_SECRET || "MOGXqJPX1OP9ogxcmpSrUFlbdA92MfLG3MLSrVbcUg8=";
+const JWT_SECRET = process.env.JWT_SECRET;
 
 export async function POST(req) {
   const { username, password } = await req.json();
