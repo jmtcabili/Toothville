@@ -11,6 +11,7 @@ import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
 import { UsersIcon, UserPlusIcon, BanknotesIcon, ChatBubbleBottomCenterTextIcon } from '@heroicons/react/24/solid'
 import styles from './home.module.css'
+import { BASE_URL } from '@/utils/constants';
 
 
 const chartConfig = {
@@ -138,10 +139,10 @@ export default function Dashboard() {
   const [currentDate, setCurrentDate] = useState("");
 
   const getPatients = async () => {
-    const resPatients = await fetch('http://localhost:3000/api/patient-record');
+    const resPatients = await fetch(`${BASE_URL}/api/patient-record`);
     const patients = await resPatients.json();
 
-    const resEarnings = await fetch('http://localhost:3000/api/all-notes');
+    const resEarnings = await fetch(`${BASE_URL}/api/all-notes`);
     const earning = await resEarnings.json();
 
     const now = new Date();

@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/table"
 
 import Link from 'next/link'
+import { BASE_URL } from '@/utils/constants';
 
 
 export default function PatientList() {
@@ -25,7 +26,7 @@ export default function PatientList() {
 
   useEffect(() => {
       async function fetchPatientList(){
-          let response = await fetch('http://localhost:3000/api/patient-record')
+          let response = await fetch(`${BASE_URL}/api/patient-record`)
           let data = await response.json();
           setPatients(data)
           setDentists(["All", ...new Set(data.map((patient)=> patient.dentist))])
