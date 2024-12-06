@@ -55,65 +55,92 @@ export default function PatientList() {
     return (
     
       <>
-        <div className="px-4 py-4 flex flex-col gap-3 md:flex-row">
-          <div id="name" className = "flex flex-row items-center border rounded border-1 bg-gray-200 max-w-max">
-            <div className="w-[75px] px-1">Name: </div>
-            <input 
-              placeholder='Search name of patient'
-              value = {nameSearch}
-              onChange = {(e) => setNameSearch(e.target.value)}
-              className='py-1 px-2 min-w-[70px] rounded-r focus:outline-none focus:ring-2 focus: ring-blue-300'/>
+        <div className="lg:mx-20 lg:mt-10 m-4">
+          {/* Search & Filters Section */}
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-full md:w-1/3">
+              <h2 className="text-xl font-bold mb-4">Search & Filters</h2>
+
+              {/* Name Search */}
+              <div className="bg-white border border-gray-300 rounded-lg p-4 mb-4">
+                <label htmlFor="nameSearch" className="block text-md font-semibold mb-2">
+                  Name
+                </label>
+                <input
+                  id="nameSearch"
+                  placeholder="Search name of patient"
+                  value={nameSearch}
+                  onChange={(e) => setNameSearch(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+              </div>
+
+              {/* Dentist Filter */}
+              <div className="bg-white border border-gray-300 rounded-lg p-4">
+                <label htmlFor="dentistFilter" className="block text-md font-semibold mb-2">
+                  Dentist
+                </label>
+                <select
+                  id="dentistFilter"
+                  value={dentistSearch}
+                  onChange={(e) => setDentistSearch(e.target.value)}
+                  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-300 bg-white"
+                >
+                  {dentists.map((dentist, index) => (
+                    <option key={index} value={dentist}>
+                      {dentist}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Patient Records Section */}
+            <div className="w-full md:w-2/3">
+              <h2 className="text-xl font-bold mb-4">Patient Records</h2>
+              <div className="bg-white border border-gray-300 rounded-lg lg:p-4 shadow-md">
+                <Table>
+                  <TableCaption>List of patients.</TableCaption>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[200px] font-bold">Name</TableHead>
+                      <TableHead className="w-[250px] font-bold">Concern</TableHead>
+                      <TableHead className="w-[100px] font-bold">ID</TableHead>
+                      <TableHead className="w-[200px] font-bold">Dentist</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredPatients.map((patient, index) => (
+                      <TableRow key={index}>
+                        <TableCell className="font-medium">
+                          <Link
+                            href={`/home/patients/${patient._id}`}
+                            className="underline"
+                          >
+                            {getDetails(patient)}
+                          </Link>
+                        </TableCell>
+                        <TableCell>{patient.concern}</TableCell>
+                        <TableCell>{patient._id.slice(-4)}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">{patient.dentist}</div>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                  <TableFooter>
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-left font-bold text-white">
+                        Total patients: {filteredPatients.length}
+                      </TableCell>
+                    </TableRow>
+                  </TableFooter>
+                </Table>
+              </div>
+            </div>
           </div>
-          <div id="name" className = "flex flex-row items-center border rounded border-1 bg-gray-200 max-w-max">
-            <div className="w-[75px] px-1">Dentist: </div>
-            <select
-              value = {dentistSearch}
-              onChange={(e) => {setDentistSearch(e.target.value)}}
-              className='py-1 px-2 min-w-[70px] rounded-r focus:outline-none focus:ring-2 focus: ring-blue-300'>
-              {dentists.map((dentist, index) =>{
-                return (<option key = {index} value = {dentist}>{dentist}</option>)
-              })}
-            </select>
-          </div>
-            
         </div>
-        <Table>
-        <TableCaption>List of patients.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[200px]">Name</TableHead>
-            <TableHead className="w-[250px]">Concern</TableHead>
-            <TableHead className="w-[100px]">ID</TableHead>
-            <TableHead className="w-[200px]">Dentist</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredPatients.map((patient, index) => {
-            return(
-              <TableRow key={index}>
-                <TableCell className="font-medium">
-                    <Link href = {`/home/patients/${patient._id}`}
-                          className = "underline">
-                        {getDetails(patient)}
-                    </Link>
-                </TableCell>
-                <TableCell>{patient.concern}</TableCell>
-                <TableCell>{patient._id.slice(-4)}</TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    {patient.dentist}
-                  </div>
-                </TableCell>
-              </TableRow>
-            )
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={4} className="text-left">Total patients: {filteredPatients.length}</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
+
       </>
     )
   }
