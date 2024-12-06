@@ -160,8 +160,12 @@ export default function Dashboard() {
   };
 
   useEffect(() => {
-    getPatients()
-  }, [])
+    getPatients();
+    const date = new Date();
+    const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
+    setCurrentDate(date.toLocaleDateString(undefined, options));
+  }, []);
+  
   return (
     <>
       <div className={styles.dashboard}>
