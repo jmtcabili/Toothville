@@ -94,9 +94,11 @@ export default function ViewForms({ params }) {
         setEditableData((prev) => ({ ...prev, [key]: value }));
     };
 
+    const [isLoading, setIsLoading] = useState(false);
+
     const handleSave = async () => {
+        setIsLoading(true); // Start loading
         try {
-            // Flatten nested fields before sending if necessary
             const preparedData = { ...editableData };
 
             if (preparedData.personalInformation.dob) {
@@ -119,8 +121,11 @@ export default function ViewForms({ params }) {
             setIsEditing(false);
         } catch (error) {
             console.error('Error saving medical history:', error);
+        } finally {
+            setIsLoading(false); // End loading
         }
     };
+
 
     const formatDate = (isoDate) => {
         if (!isoDate) return '';
@@ -344,7 +349,7 @@ export default function ViewForms({ params }) {
                     </button>
                 </div>
                 <Accordion>
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Personal Information</span>
@@ -356,22 +361,43 @@ export default function ViewForms({ params }) {
                                         <div className={styles.answer}>
                                             {isEditing ? (
                                                 item.isBoolean ? (
+                                                    <div className={styles.checkboxWrapper}>
+                                                        <input
+                                                            type="checkbox"
+                                                            checked={item.key.includes('.')
+                                                                ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || false
+                                                                : editableData[item.key] || false}
+                                                            onChange={(e) => {
+                                                                if (item.key.includes('.')) {
+                                                                    const [mainKey, subKey] = item.key.split('.');
+                                                                    setEditableData((prev) => ({
+                                                                        ...prev,
+                                                                        [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
+                                                                    }));
+                                                                } else {
+                                                                    handleInputChange(item.key, e.target.checked);
+                                                                }
+                                                            }}
+                                                            className={styles.checkboxInput}
+                                                        />
+                                                        <label className={styles.checkboxLabel}>
+                                                            {editableData[item.key.includes('.')
+                                                                ? item.key.split('.')[0]
+                                                                : item.key]
+                                                                ? 'Yes'
+                                                                : 'No'}
+                                                        </label>
+                                                    </div>
+                                                ) : item.key === 'personalInformation.dob' ? (
                                                     <input
-                                                        type="checkbox"
-                                                        checked={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || false
-                                                            : editableData[item.key] || false}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.checked);
-                                                            }
-                                                        }}
+                                                        type="date"
+                                                        value={
+                                                            editableData[item.key]
+                                                                ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                                : ''
+                                                        }
+                                                        onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                        className={styles.dateInput}
                                                     />
                                                 ) : (
                                                     <input
@@ -401,7 +427,7 @@ export default function ViewForms({ params }) {
                                                             : editableData[item.key])
                                                             ? 'Yes'
                                                             : 'No'
-                                                        : item.key === 'personalInformation.dob' && editableData[item.key]
+                                                        : item.key === 'lastMedicalCheckup' && editableData[item.key]
                                                             ? formatDate(editableData[item.key])
                                                             : item.key.includes('.')
                                                                 ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
@@ -411,20 +437,11 @@ export default function ViewForms({ params }) {
                                         </div>
                                     </div>
                                 ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Contact Information</span>
@@ -432,10 +449,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedContactInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -452,85 +470,26 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
-                                                        : item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
-                                                            : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
-                                    </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
-                            </AccordionContent>
-                        </AccordionItem>
-                    </Accordion>
-
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
-                        <AccordionItem value="medicalHistory" className={styles.accordionItem}>
-                            <AccordionTrigger className={styles.accordionTrigger}>
-                                <span>Emergency Contact</span>
-                            </AccordionTrigger>
-                            <AccordionContent className={styles.accordionContent}>
-                                {displayedEmergencyInfo.map((item, index) => (
-                                    <div key={index} className={styles.questionAnswer}>
-                                    <div className={styles.question}>{item.question}</div>
-                                    <div className={styles.answer}>
-                                        {isEditing ? (
-                                            item.isBoolean ? (
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
                                                 <input
-                                                    type="checkbox"
-                                                    checked={item.key.includes('.')
-                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || false
-                                                        : editableData[item.key] || false}
-                                                    onChange={(e) => {
-                                                        if (item.key.includes('.')) {
-                                                            const [mainKey, subKey] = item.key.split('.');
-                                                            setEditableData((prev) => ({
-                                                                ...prev,
-                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
-                                                            }));
-                                                        } else {
-                                                            handleInputChange(item.key, e.target.checked);
-                                                        }
-                                                    }}
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
                                                 />
                                             ) : (
                                                 <input
@@ -560,30 +519,113 @@ export default function ViewForms({ params }) {
                                                         : editableData[item.key])
                                                         ? 'Yes'
                                                         : 'No'
-                                                    : item.key.includes('.')
-                                                    ? editableData[item.key.split('.')[0]]?.[item.key.split('.')[1]] || 'No information provided.'
-                                                    : editableData[item.key] || 'No information provided.'
-                                                }
-
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
+                                                        : item.key.includes('.')
+                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
+                                                            : editableData[item.key] || 'No information provided.'}
                                             </span>
                                         )}
                                     </div>
                                 </div>
                             ))}
-
-                            {!isEditing && (
-                                <button
-                                    className={styles.showMoreButton}
-                                    onClick={() => setShowMore(!showMore)}
-                                >
-                                    {showMore ? 'Show Less' : 'More'}
-                                </button>
-                            )}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
+                        <AccordionItem value="medicalHistory" className={styles.accordionItem}>
+                            <AccordionTrigger className={styles.accordionTrigger}>
+                                <span>Emergency Contact</span>
+                            </AccordionTrigger>
+                            <AccordionContent className={styles.accordionContent}>
+                                {displayedEmergencyInfo.map((item, index) => (
+                                    <div key={index} className={styles.questionAnswer}>
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={item.key.includes('.')
+                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || false
+                                                            : editableData[item.key] || false}
+                                                        onChange={(e) => {
+                                                            if (item.key.includes('.')) {
+                                                                const [mainKey, subKey] = item.key.split('.');
+                                                                setEditableData((prev) => ({
+                                                                    ...prev,
+                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.checked },
+                                                                }));
+                                                            } else {
+                                                                handleInputChange(item.key, e.target.checked);
+                                                            }
+                                                        }}
+                                                        className={styles.checkboxInput}
+                                                    />
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
+                                                            ? 'Yes'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
+                                                        : item.key.includes('.')
+                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
+                                                            : editableData[item.key] || 'No information provided.'}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                            </AccordionContent>
+                        </AccordionItem>
+                    </Accordion>
+
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Family Doctor</span>
@@ -591,10 +633,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedFamilyDoctorInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -611,58 +654,70 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Specialist</span>
@@ -670,10 +725,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedSpecialistInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -690,58 +746,70 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Pharmacy</span>
@@ -749,10 +817,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedPharmacyInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -769,58 +838,70 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Driver's License</span>
@@ -828,10 +909,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedIdentificationInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -848,58 +930,70 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Dental Insurance</span>
@@ -907,10 +1001,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedInsuranceInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -927,64 +1022,70 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
-                                <button
-                                    className={styles.showMoreButton}
-                                    onClick={() => setShowMore(!showMore)}
-                                >
-                                    {showMore ? 'Show Less' : 'More'}
-                                </button>
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Referral Source</span>
@@ -992,10 +1093,11 @@ export default function ViewForms({ params }) {
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedReferralInfo.map((item, index) => (
                                     <div key={index} className={styles.questionAnswer}>
-                                        <div className={styles.question}>{item.question}</div>
-                                        <div className={styles.answer}>
-                                            {isEditing ? (
-                                                item.isBoolean ? (
+                                    <div className={styles.question}>{item.question}</div>
+                                    <div className={styles.answer}>
+                                        {isEditing ? (
+                                            item.isBoolean ? (
+                                                <div className={styles.checkboxWrapper}>
                                                     <input
                                                         type="checkbox"
                                                         checked={item.key.includes('.')
@@ -1012,53 +1114,65 @@ export default function ViewForms({ params }) {
                                                                 handleInputChange(item.key, e.target.checked);
                                                             }
                                                         }}
+                                                        className={styles.checkboxInput}
                                                     />
-                                                ) : (
-                                                    <input
-                                                        type="text"
-                                                        value={item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
-                                                            : editableData[item.key] || ''}
-                                                        onChange={(e) => {
-                                                            if (item.key.includes('.')) {
-                                                                const [mainKey, subKey] = item.key.split('.');
-                                                                setEditableData((prev) => ({
-                                                                    ...prev,
-                                                                    [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
-                                                                }));
-                                                            } else {
-                                                                handleInputChange(item.key, e.target.value);
-                                                            }
-                                                        }}
-                                                        className={styles.input}
-                                                    />
-                                                )
-                                            ) : (
-                                                <span>
-                                                    {item.isBoolean
-                                                        ? (item.key.includes('.')
-                                                            ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
-                                                            : editableData[item.key])
+                                                    <label className={styles.checkboxLabel}>
+                                                        {editableData[item.key.includes('.')
+                                                            ? item.key.split('.')[0]
+                                                            : item.key]
                                                             ? 'Yes'
-                                                            : 'No'
+                                                            : 'No'}
+                                                    </label>
+                                                </div>
+                                            ) : item.key === 'personalInformation.dob' ? (
+                                                <input
+                                                    type="date"
+                                                    value={
+                                                        editableData[item.key]
+                                                            ? new Date(editableData[item.key]).toISOString().split('T')[0]
+                                                            : ''
+                                                    }
+                                                    onChange={(e) => handleInputChange(item.key, e.target.value)}
+                                                    className={styles.dateInput}
+                                                />
+                                            ) : (
+                                                <input
+                                                    type="text"
+                                                    value={item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || ''
+                                                        : editableData[item.key] || ''}
+                                                    onChange={(e) => {
+                                                        if (item.key.includes('.')) {
+                                                            const [mainKey, subKey] = item.key.split('.');
+                                                            setEditableData((prev) => ({
+                                                                ...prev,
+                                                                [mainKey]: { ...prev[mainKey], [subKey]: e.target.value },
+                                                            }));
+                                                        } else {
+                                                            handleInputChange(item.key, e.target.value);
+                                                        }
+                                                    }}
+                                                    className={styles.input}
+                                                />
+                                            )
+                                        ) : (
+                                            <span>
+                                                {item.isBoolean
+                                                    ? (item.key.includes('.')
+                                                        ? editableData[item.key.split('.')[0]][item.key.split('.')[1]]
+                                                        : editableData[item.key])
+                                                        ? 'Yes'
+                                                        : 'No'
+                                                    : item.key === 'lastMedicalCheckup' && editableData[item.key]
+                                                        ? formatDate(editableData[item.key])
                                                         : item.key.includes('.')
                                                             ? editableData[item.key.split('.')[0]][item.key.split('.')[1]] || 'No information provided.'
                                                             : editableData[item.key] || 'No information provided.'}
-
-                                                </span>
-                                            )}
-                                        </div>
+                                            </span>
+                                        )}
                                     </div>
-                                ))}
-
-                                {!isEditing && (
-                                    <button
-                                        className={styles.showMoreButton}
-                                        onClick={() => setShowMore(!showMore)}
-                                    >
-                                        {showMore ? 'Show Less' : 'More'}
-                                    </button>
-                                )}
+                                </div>
+                            ))}
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
@@ -1068,7 +1182,7 @@ export default function ViewForms({ params }) {
                         </button><br /></>
                     )}
 
-                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="medicalHistory">
+                    <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
                                 <span>Consent Signatures</span>
