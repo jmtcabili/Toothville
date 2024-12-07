@@ -97,34 +97,37 @@ export default function ViewForms({ params }) {
     const [isLoading, setIsLoading] = useState(false);
 
     const handleSave = async () => {
-        setIsLoading(true); // Start loading
-        try {
-            const preparedData = { ...editableData };
+    setIsLoading(true); // Start loading
+    try {
+        const preparedData = { ...editableData };
 
-            if (preparedData.personalInformation.dob) {
-                preparedData.personalInformation.dob = new Date(preparedData.personalInformation.dob).toISOString();
-            }
-
-            const response = await fetch(`${BASE_URL}/api/forms?_id=${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(preparedData),
-            });
-
-            if (!response.ok) {
-                throw new Error(`Error saving data: ${response.statusText}`);
-            }
-
-            const updatedData = await response.json();
-            setPatientData(updatedData.patientData);
-            setEditableData(updatedData.patientData);
-            setIsEditing(false);
-        } catch (error) {
-            console.error('Error saving medical history:', error);
-        } finally {
-            setIsLoading(false); // End loading
+        // Ensure dob is converted to ISO format (string)
+        if (preparedData.personalInformation?.dob) {
+            preparedData.personalInformation.dob = new Date(preparedData.personalInformation.dob).toISOString();
         }
-    };
+
+        const response = await fetch(`${BASE_URL}/api/forms?_id=${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(preparedData),
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error saving data: ${response.statusText}`);
+        }
+
+        const { updatedPatient } = await response.json();
+
+        setPatientData(updatedPatient);
+        setEditableData(updatedPatient);
+        setIsEditing(false); // Close edit mode
+    } catch (error) {
+        console.error('Error saving medical history:', error);
+    } finally {
+        setIsLoading(false); // End loading
+    }
+};
+
 
 
     const formatDate = (isoDate) => {
