@@ -27,7 +27,6 @@ export default async function PatientDetails({params}){
             <h2 className='font-bold mb-2'>Bio</h2>
             <div id="bio-info" className='font-light '>
                 Born on {new Date(patient.personalInformation.dob).toISOString().split("T")[0]} <br />
-                {patient.contactInformation.homePhone} 
                 {patient.contactInformation.email}<br/>
                 { getPhone(patient)}
             </div>
