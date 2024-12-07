@@ -34,27 +34,33 @@ const SignUp = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    try {
-      const res = await fetch(`${BASE_URL}/api/auth/signup`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      if (res.status === 201) {
-        setInputError({ username: false, password: false });
-        router.push("/?success=Account created");
-      } else {
-        setError("Username is already taken. Please choose a different one.");
+    if (password.length < 5) {
+      setError("Password must be at least 5 characters long.");
+      setInputError({ username: false, password: true });
+      return;
+    }else{
+      try {
+        const res = await fetch(`${BASE_URL}/api/auth/signup`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ username, password }),
+        });
+  
+        if (res.status === 201) {
+          setInputError({ username: false, password: false });
+          router.push("/?success=Account created");
+        } else {
+          setError("Username is already taken. Please choose a different one.");
+          setInputError({ username: true, password: true });
+        }
+      } catch (err) {
+        setError("Something went wrong. Please try again.");
         setInputError({ username: true, password: true });
       }
-    } catch (err) {
-      setError("Something went wrong. Please try again.");
-      setInputError({ username: true, password: true });
     }
+    
   };
 
   return (
