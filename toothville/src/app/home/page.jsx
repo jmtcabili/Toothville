@@ -178,7 +178,7 @@ export default function Dashboard() {
         <div className={styles.welcomeSection}>
           <h2>Good Morning, Dr. {user.name}</h2>
           <p className={styles.subText}>Today is {currentDate}.</p>
-          <button className={styles.appointmentsButton}>See Patients</button>
+          <button className={styles.appointmentsButton}>Welcome to Toothville!</button>
         </div>
 
         {/* Stat Cards */}

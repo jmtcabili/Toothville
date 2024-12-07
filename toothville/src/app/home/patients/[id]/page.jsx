@@ -30,9 +30,6 @@ export default async function PatientDetails({params}){
                 {patient.contactInformation.homePhone} <br />
                 {patient.contactInformation.email}
             </div>
-            <div className="w-full text-right">
-                More
-            </div>
         </div>
         <div id="patient-actions" className = "px-3 bg-white mb-2 rounded">
             
