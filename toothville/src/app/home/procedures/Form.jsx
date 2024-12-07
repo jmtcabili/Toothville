@@ -22,6 +22,10 @@ export function ProcedureForm({ procedure, onSave, onCancel }) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if (price < 0){
+      alert("Price cannot be negative")
+      return
+    }
     onSave({ id: procedure?._id, name, price: Number(price), category })
   }
 
