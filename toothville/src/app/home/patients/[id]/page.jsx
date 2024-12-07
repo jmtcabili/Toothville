@@ -16,6 +16,7 @@ export default async function PatientDetails({params}){
         const age_dt = new Date(diff_ms);
         return Math.abs(age_dt.getUTCFullYear() - 1970);
     }
+    const getPhone = (patient) => {return patient.contactInformation.cellularPhone}
 
     return (
     <>
@@ -25,10 +26,10 @@ export default async function PatientDetails({params}){
         <div id="bio" className='bg-white px-3 py-3 mb-4 rounded'>
             <h2 className='font-bold mb-2'>Bio</h2>
             <div id="bio-info" className='font-light '>
-                <span>{getAge(patient)}</span><br />
                 Born on {new Date(patient.personalInformation.dob).toISOString().split("T")[0]} <br />
-                {patient.contactInformation.homePhone} <br />
-                {patient.contactInformation.email}
+                {patient.contactInformation.homePhone} 
+                {patient.contactInformation.email}<br/>
+                { getPhone(patient)}
             </div>
         </div>
         <div id="patient-actions" className = "px-3 bg-white mb-2 rounded">
