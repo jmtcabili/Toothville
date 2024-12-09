@@ -21,10 +21,7 @@ const chartConfig = {
   },
 } 
 
-const user = {
-  "name": localStorage.getItem("user"),
-  "type": "Dentist"
-}
+
 
 
 
@@ -139,6 +136,10 @@ export default function Dashboard() {
   const [earnings, setEarnings] = React.useState(0);
   const [newPatients, setNewPatients] = React.useState(0);
   const [currentDate, setCurrentDate] = useState("");
+  const [user, setUser] = useState({
+    name: "", 
+    type: ""
+  })
 
   const getPatients = async () => {
     const resPatients = await fetch(`${BASE_URL}/api/patient-record`);
@@ -167,6 +168,7 @@ export default function Dashboard() {
     const date = new Date();
     const options = { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' };
     setCurrentDate(date.toLocaleDateString(undefined, options));
+    setUser({...user, name: sessionStorage.getItem("user"), type: "Dentist"});
   }, []);
 
   return (

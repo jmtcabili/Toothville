@@ -36,7 +36,7 @@ const Page = () => {
 
       if (res.ok) {
         setInputError({ username: false, password: false });
-        localStorage.setItem("user", username);
+        sessionStorage.setItem("user", username);
         router.push("/home");
       } else {
         setError("Invalid username or password");
