@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect} from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import styles from './home.module.css';
@@ -11,20 +11,22 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const currentPath = usePathname();
   const [isHovered, setIsHovered] = useState(false);
+  const [user, setUser] = useState({
+    name: "", 
+    type: "", 
+  });
   const router = useRouter();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
   const handleSignOut = () => {
     router.push('/signout'); 
+    sessionStorage.removeItem('user');
   };
-  let username  = ""
-  if (localStorage.getItem('user') == null) {
-     username = "User"
-  }else{
-    username = localStorage.getItem('user')
-  }
-  
+
+  useEffect(() => {
+    setUser({...user, name: sessionStorage.getItem("user"), type: "Dentist"});
+  }, [])
 
   return (
     <div className="flex justify-between items-center w-full top-0 p-6 md:p-8 lg:pb-0 z-50 shadow-lg md:shadow-none md:bg-transparent">
@@ -163,7 +165,7 @@ export default function Navbar() {
               className="rounded-full border-2 border-white h-10"
             />
             <div className="flex flex-col items-start">
-              <span className="font-semibold text-lg ">Dr.{username} </span>
+              <span className="font-semibold text-lg ">Dr.{user.name} </span>
               <span className="text-sm font-light">Head Dentist</span>
             </div>
           </>

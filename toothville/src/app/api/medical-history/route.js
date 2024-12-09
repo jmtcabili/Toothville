@@ -3,9 +3,10 @@ import { patientModel } from '../../lib/db';
 import { ObjectId } from 'mongodb';
 
 export async function GET(req) {
-  try {
     const { searchParams } = new URL(req.url);
     const patientId = searchParams.get('_id');
+  try {
+   
 
     if (!patientId) {
       return new Response(JSON.stringify({ error: 'Patient ID is required' }), {
@@ -43,9 +44,9 @@ export async function GET(req) {
 }
 
 export async function PUT(req) {
-  try {
     const { searchParams } = new URL(req.url);
     const patientId = searchParams.get('_id');
+  try {   
     const updatedData = await req.json();
 
     if (!patientId) {
