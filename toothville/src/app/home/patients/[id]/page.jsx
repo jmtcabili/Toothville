@@ -2,7 +2,7 @@
 import { BASE_URL } from '@/utils/constants'
 import PatientSummary from './PatientSummary'
 import Link from 'next/link'
-
+import { Calendar, Mail, IdCard, Smartphone} from 'lucide-react'
 
 export default async function PatientDetails({params}){
     const { id }  = params
@@ -11,13 +11,10 @@ export default async function PatientDetails({params}){
     let response = await fetch(`${BASE_URL}/api/patient-find?_id=${id}`)
     let patient = await response.json()
 
-    const getAge = (patient) => {
-        const diff_ms = Date.now() - new Date(patient.personalInformation.dob); 
-        const age_dt = new Date(diff_ms);
-        return Math.abs(age_dt.getUTCFullYear() - 1970);
+    const getPhone = (patient) => {return patient.contactInformation.cellularPhone ? patient.contactInformation.cellularPhone : " -"}
+    const getDob = (patient) => {
+        return patient.personalInformation.dob != "" ? new Date(patient.personalInformation.dob).toISOString().split("T")[0] : " - "
     }
-    const getPhone = (patient) => {return patient.contactInformation.cellularPhone}
-
     return (
     <>
     <div className='flex justify-center min-h-screen lg:mx-20 lg:mt-10 mt-0'>
@@ -26,9 +23,18 @@ export default async function PatientDetails({params}){
         <div id="bio" className='bg-white px-3 py-3 mb-4 rounded'>
             <h2 className='font-bold mb-2'>Bio</h2>
             <div id="bio-info" className='font-light '>
-                Born on {new Date(patient.personalInformation.dob).toISOString().split("T")[0]} <br />
-                {patient.contactInformation.email}<br/>
-                { getPhone(patient)}
+                <div className="flex flex-row items-center gap-1">
+                    <IdCard strokeWidth={1.2} size = {16}/>: {patient._id.slice(-4)}<br />
+                </div>
+                <div className="flex flex-row items-center gap-1">
+                    <Calendar strokeWidth={1.2} size = {16}/>: {getDob(patient)}<br />
+                </div>
+                <div className = "flex flex-row items-center gap-1">
+                    <Mail strokeWidth={1.2} size = {16}/>: {patient.contactInformation.email != "" ? patient.contactInformation.email : "No email"}
+                </div>
+                <div className="flex flex-row items-center gap-1">
+                    <Smartphone strokeWidth={1.2} size = {16}/>: {getPhone(patient)}
+                </div>
             </div>
         </div>
         <div id="patient-actions" className = "px-3 bg-white mb-2 rounded">
