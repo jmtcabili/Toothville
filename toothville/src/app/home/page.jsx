@@ -4,6 +4,8 @@
 import Link from 'next/link';
 import Image from 'next/image'; 
 import React, {useState, useEffect} from "react"
+import Spinner from "@/components/ui/spinner"
+
 
 //chart imports
 import { Bar, BarChart, CartesianGrid, XAxis, YAxis} from "recharts"
@@ -142,25 +144,13 @@ export default function Dashboard() {
   })
 
   const getPatients = async () => {
-    const resPatients = await fetch(`${BASE_URL}/api/patient-record`);
-    const patients = await resPatients.json();
+     
+    const resCount = await fetch(`${BASE_URL}/api/dashboard`);
+    const {allCount, newCount, earnings} = await resCount.json();
 
-    const resEarnings = await fetch(`${BASE_URL}/api/all-notes`);
-    const earning = await resEarnings.json();
-
-    const now = new Date();
-    const pastWeek = new Date();
-    pastWeek.setDate(now.getDate() - 7);
-
-    // Filter patients based on dateRecorded being within the last 7 days
-    const newPatientsCount = patients.filter(patient => {
-      const dateRecorded = new Date(patient.dateRecorded);
-      return dateRecorded >= pastWeek && dateRecorded <= now;
-    }).length;
-
-    setNumPatients(patients.length);
-    setEarnings(earning);
-    setNewPatients(newPatientsCount); // Update state
+    setNumPatients(allCount);
+    setEarnings(earnings);
+    setNewPatients(newCount); // Update state
   };
 
   useEffect(() => {
