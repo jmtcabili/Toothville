@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import Link from "next/link";
+import Spinner from "@/components/ui/spinner";
 
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { BASE_URL } from "@/utils/constants";
@@ -15,6 +16,9 @@ const Page = () => {
   const [inputError, setInputError] = useState({ username: false, password: false });
   const [showGreeting, setShowGreeting] = useState(false);
   const router = useRouter();
+
+  const [disableSignIn, setDisableSignIn] = useState(true);
+
 
   useEffect(() => {
     setTimeout(() => {
@@ -108,13 +112,18 @@ const Page = () => {
               required
             />
           </div>
-
-          <button
-            type="submit"
-            className={`${styles.commonButton} ${styles.signInButton}`}
-          >
-            Sign In
+          
+          
+          <button type="submit"
+                  className="w-full p-2.5 mt-2.5 flex flex-row justify-center items-center cursor:pointer bg-nav_blue text-white rounded-md relative">
+              <div className="flex flex-row justify-center items-center"> 
+                  Sign in
+              </div>
+              {disableSignIn && 
+                <div className="absolute left-3"><Spinner dim = {20} isDarkBg={true}/></div>}
           </button>
+        
+         
 
           <Link
             href="/signup"
