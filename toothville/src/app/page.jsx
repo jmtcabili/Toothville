@@ -17,7 +17,7 @@ const Page = () => {
   const [showGreeting, setShowGreeting] = useState(false);
   const router = useRouter();
 
-  const [disableSignIn, setDisableSignIn] = useState(true);
+  const [disableSignIn, setDisableSignIn] = useState(false);
 
 
   useEffect(() => {
@@ -28,7 +28,7 @@ const Page = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-
+    setDisableSignIn(true);
     try {
       const res = await fetch(`${BASE_URL}/api/auth/signin`, {
         method: "POST",
@@ -45,9 +45,11 @@ const Page = () => {
       } else {
         setError("Invalid username or password");
         setInputError({ username: true, password: true });
+        setDisableSignIn(false);
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
+      setDisableSignIn(false);
       setInputError({ username: true, password: true });
     }
   };
@@ -61,6 +63,8 @@ const Page = () => {
       setInputError((prev) => ({ ...prev, password: false })); // Reset password error
     }
   };
+
+
 
   if (!BASE_URL){
     return null; 
@@ -113,24 +117,25 @@ const Page = () => {
             />
           </div>
           
-          
-          <button type="submit"
-                  className="w-full p-2.5 mt-2.5 flex flex-row justify-center items-center cursor:pointer bg-nav_blue text-white rounded-md relative">
-              <div className="flex flex-row justify-center items-center"> 
-                  Sign in
-              </div>
-              {disableSignIn && 
+            
+            <button type="submit"
+                    className={`w-full p-2.5 mt-2.5 flex flex-row justify-center items-center ${!disableSignIn ? "bg-nav_blue" : "bg-blue-400"} cursor:pointer text-white rounded-md relative`}
+                    disabled={disableSignIn}>
+                <div className="flex flex-row justify-center items-center"> 
+                    Sign in
+                </div>
+                {disableSignIn && 
                 <div className="absolute left-3"><Spinner dim = {20} isDarkBg={true}/></div>}
-          </button>
+            </button>
         
-         
-
+     
           <Link
             href="/signup"
             className={`${styles.commonButton} ${styles.thirdButton}`}
           >
             Don't have an account?
           </Link>
+                    
         </form>
       </div>
     </div>

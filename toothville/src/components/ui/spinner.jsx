@@ -2,11 +2,11 @@ import { LoaderCircle } from "lucide-react"
 
 export default function Spinner({dim, isDarkBg}){
     dim = dim === undefined ? "20" : dim.toString();
-    let border = "border-nav_blue"
+    let border = "border-blue-400"
     let borderTop = "border-t-nav_gray"
     if (isDarkBg){
         border = "border-white"
-        borderTop = "border-t-nav_blue"
+        borderTop = "border-t-blue-400"
     }
     return(
         <>
