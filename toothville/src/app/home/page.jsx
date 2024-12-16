@@ -2,9 +2,9 @@
 
 //next imports
 import Link from 'next/link';
-import Image from 'next/image'; 
 import React, {useState, useEffect} from "react"
 import Spinner from "@/components/ui/spinner"
+import { UserRoundPlus, NotebookTabs, Settings} from 'lucide-react'
 
 
 //chart imports
@@ -94,9 +94,7 @@ function Actions(){
             
             <div className="col-span-2">
               <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-[#0487D5] text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="3" stroke="currentColor" className="size-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
-                  </svg>
+                 <UserRoundPlus/>
                   <div id="details" className="flex flex-col justify-center">
                       <Link href = "../form" className='font-bold text-xl'>Add Patient</Link>
                   </div>
@@ -105,11 +103,10 @@ function Actions(){
             
         
             <div id = "action2" className="">
-                <div className="flex flex-col gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 w-full h-20 rounded">
-                    <div id="details" className="flex flex-col">
-                        <div className="font-bold lg:text-lg text-white lg:px-0 px-7 text-center">
-                            <Link href='/home/patients'>View patients</Link>
-                        </div>
+                <div className="flex flex-row gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 w-full h-20 rounded">
+                    <NotebookTabs color='white' size={24}/>
+                    <div className="font-bold lg:text-lg text-white text-center">
+                        <Link href='/home/patients'>View patients</Link>
                     </div>
                 </div>
             </div>
@@ -117,11 +114,10 @@ function Actions(){
           
           <div id = "action3" className="">
           <div className="flex flex-row gap-x-2 justify-center items-center bg-nav_blue py-6 px-2 h-20 w-full rounded">
-              <div id="details" className="flex flex-col">
+                <Settings color='white' size={24}/>
                 <div className="font-bold text-white lg:text-lg text-center">
                     <Link href = "/home/procedures">Manage Procedures</Link>
-                </div>
-              </div>
+                </div>              
             </div>
           </div>
         </div>    
