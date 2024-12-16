@@ -18,6 +18,7 @@ const Page = () => {
   const router = useRouter();
 
   const [disableSignIn, setDisableSignIn] = useState(false);
+  const [disableSignUp, setDisableSignUp] = useState(false);
 
 
   useEffect(() => {
@@ -71,73 +72,72 @@ const Page = () => {
   }
   return (
     <div className={styles.container}>
-      <div className={styles["form-container"]}>
-        <img
-          src="/assets/banner.png"
-          alt="Toothville Logo"
-          className={styles.logo}
-        />
-        <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Welcome back!
-        </div>
-
-        <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Enter account details to log in!
-        </div>
-
-        {error && (
-            <div className={styles.error}>
-              <ExclamationCircleIcon className={styles.errorIcon} />
-              {error}
+        <div className={styles["form-container"]}>
+            <img
+                src="/assets/banner.png"
+                alt="Toothville Logo"
+                className={styles.logo}
+            />
+            <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
+                Welcome back!
             </div>
-          )}
-          
-        <form className={styles.form} onSubmit={handleSignIn}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => handleInputChange("username", e.target.value)}
-              className={`${styles.inputField} ${inputError.username ? styles.errorInput : ""}`}
-              required
-            />
-          </div>
-         
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
-              required
-            />
-          </div>
-          
-            
-            <button type="submit"
-                    className={`w-full p-2.5 mt-2.5 flex flex-row justify-center items-center ${!disableSignIn ? "bg-nav_blue" : "bg-blue-400"} cursor:pointer text-white rounded-md relative`}
-                    disabled={disableSignIn}>
-                <div className="flex flex-row justify-center items-center"> 
-                    Sign in
+
+            <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
+                Enter account details to log in!
+            </div>
+
+            {error && (
+                <div className={styles.error}>
+                    <ExclamationCircleIcon className={styles.errorIcon} />
+                    {error}
                 </div>
-                {disableSignIn && 
-                <div className="absolute left-3"><Spinner dim = {20} isDarkBg={true}/></div>}
-            </button>
-        
-     
-          <Link
-            href="/signup"
-            className={`${styles.commonButton} ${styles.thirdButton}`}
-          >
-            Don't have an account?
-          </Link>
-                    
-        </form>
-      </div>
+            )}
+            
+            <form className={styles.form} onSubmit={handleSignIn}>
+                <div className={styles.inputGroup}>
+                <label htmlFor="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => handleInputChange("username", e.target.value)}
+                    className={`${styles.inputField} ${inputError.username ? styles.errorInput : ""}`}
+                    required
+                />
+                </div>
+                
+                <div className={styles.inputGroup}>
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
+                    required
+                />
+                </div>
+                
+                <button type="submit"
+                        className={`w-full p-2.5 mt-2.5 flex flex-row justify-center items-center ${!disableSignIn ? "bg-nav_blue" : "bg-blue-400"} cursor:pointer text-white rounded-md relative`}
+                        disabled={disableSignIn}>
+                    <div className="flex flex-row justify-center items-center"> 
+                        Sign in
+                    </div>
+                    {disableSignIn && 
+                    <div className="absolute left-3"><Spinner dim = {20} isDarkBg={true}/></div>}
+                </button>
+            
+             
+                <Link href="/signup"  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
+                      onClick={() => setDisableSignUp(true)}>
+                    <div>Don't have an account?</div>
+                    {disableSignUp && 
+                    <div className="absolute left-3"><Spinner dim = {20} isDarkBg={false}/></div>}
+                </Link>
+              
+            </form>
+        </div>
     </div>
   );
 };
