@@ -125,7 +125,7 @@ const SignUp = () => {
             </div>
             {disableRegister && <div className = "absolute left-3"><Spinner dim={20} isDarkBg={true}/></div>}
             </button>
-            <Link href="/"  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
+            <Link href={disableRegister ? `javascript:void(0)` : "/"}  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
                         onClick={() => setDisableLogin(true)}>
                     <div>Already have an account?</div>
                     {disableLogin && 

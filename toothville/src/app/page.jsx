@@ -129,8 +129,8 @@ const Page = () => {
                 </button>
             
              
-                <Link href="/signup"  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
-                      onClick={() => setDisableSignUp(true)}>
+                <Link href={(disableSignIn) ? "javascript:void(0)" : "/signup"}  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
+                      onClick={() => {if (!disableSignIn) setDisableSignUp(true)}}>
                     <div>Don't have an account?</div>
                     {disableSignUp && 
                     <div className="absolute left-3"><Spinner dim = {20} isDarkBg={false}/></div>}
