@@ -96,7 +96,7 @@ function Actions(){
               <div id = "action1" className="flex flex-row gap-x-2 justify-center gap-2 items-center bg-[#0487D5] text-white text-xl py-4 px-2 w-full rounded min-h-[75px]">
                  <UserRoundPlus/>
                   <div id="details" className="flex flex-col justify-center">
-                      <Link href = "../form" className='font-bold text-xl'>Add Patient</Link>
+                      <Link href = "../form-qr" className='font-bold text-xl'>Add Patient</Link>
                   </div>
               </div>
             </div>

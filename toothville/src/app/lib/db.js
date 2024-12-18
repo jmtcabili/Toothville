@@ -164,13 +164,20 @@ const notesSchema = new Schema ({
     comment: String, 
 })
 
+const formPasswordSchema = new Schema ({
+    name: String,
+    password: String,
+})
+
 
 
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
 const proceduresModel = mongoose.models.procedure || mongoose.model("procedure", procedureSchema);
+const formPasswordModel = mongoose.models.formPassword || mongoose.model("formPassword", formPasswordSchema);
 
-export { patientModel}; 
+export { patientModel };
 export { notesModel };
 export { proceduresModel };
+export { formPasswordModel };
 export default dbConnect
