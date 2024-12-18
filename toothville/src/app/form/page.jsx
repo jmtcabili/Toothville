@@ -5,6 +5,7 @@ import styles from "./personal-information/page.module.css";
 import React, {useState, useRef, useEffect} from "react"
 import Link from "next/link"
 import {QRCodeCanvas} from "qrcode.react"
+import { Input } from "@/components/ui/input";
 
 const Header = () => {
     return(
@@ -24,26 +25,7 @@ export default function FormQR(){
     
     return(
         <>
-            <div className = "h-screen flex flex-col">
-                <Header/>
-                <div id="content" className = "h-full py-8 px-4 flex flex-col gap-2 items-center">
-                    <div id="instructions" className = "max-w-[500px] py-2">
-                        <h1 className = "font-semibold underline">Instructions</h1>
-                        <p>Let the patient scan the qr code or enter the link on their phone.</p>
-                    </div>
-                    <div id="qr-link" className = "flex flex-col items-center gap-2 py-2">
-                        <div id="qr" ref = {qrRef} className = "border border-black mb-2">
-                           <QRCodeCanvas value = {formLink} size={300}/>
-                        </div>
-                        <div id="link" className = "text-wrap w-[300px] text-center border">
-                            <Link href = {formLink} className = "text-wrap">{formLink}</Link>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-           
-            
+            <Input className = "!bg-white"></Input>
         </>
     )
 }
