@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { BASE_URL } from "@/utils/constants";
 import styles from "../form/personal-information/page.module.css";
@@ -6,7 +6,7 @@ import React, {useState, useRef} from "react"
 import Link from "next/link"
 import {QRCodeCanvas} from "qrcode.react"
 
-const Header = () => {
+export function Header(){
     return(
         <>
             <header className = {styles.header}>
