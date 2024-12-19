@@ -37,14 +37,18 @@ export default function FormQR(){
                 },
                 body: JSON.stringify({ inputPassword: inputPassword }),
             })
+            console.log(res);
+            
             const data = await res.json();
+            console.log(data);
+            
             if (data.status === true){
                 router.push("/form/personal-information");
             }else{
                 alert("Incorrect password");
             }
         }catch(error){
-            console.log(error);
+           
         }finally{
             setDisableSubmit(false);
         }
