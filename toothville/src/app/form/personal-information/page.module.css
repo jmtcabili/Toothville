@@ -9,10 +9,6 @@
   
   .header {
     width: 100vw;
-    position: relative;
-    left: 50%;
-    right: 50%;
-    margin-left: -50vw;
     background-color: #153F89;
     color: white;
     display: flex;

@@ -1,4 +1,3 @@
-import { LoaderCircle } from "lucide-react"
 
 export default function Spinner({dim, isDarkBg}){
     dim = dim === undefined ? "20" : dim.toString();
