@@ -1,8 +1,9 @@
+"use client"
 
 import styles from "../personal-information/page.module.css"
 import Image from "next/image";
 import logo from "../../../../public/assets/banner.png";
-
+import React, {useEffect} from "react";
 function Header(){
     return(
         <>
@@ -13,6 +14,16 @@ function Header(){
     )
 }
 export default function Success(){
+
+    useEffect(() => {
+        history.pushState(null, '', window.location.href);
+        window.addEventListener('popstate', function (event) {
+            console.log("triggered");
+            
+            history.pushState(null, '', window.location.href);
+        });
+    }, []);
+
     return (
         <>
             <div className="flex flex-col items-center h-screen">
