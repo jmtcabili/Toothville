@@ -18,14 +18,15 @@ export async function POST(req) {
         const validPassword = await bcrypt.compare(inputPassword, password)
         if (validPassword) {
             const token_forms = jwt.sign({user: "patient"}, JWT_SECRET, {expiresIn: 60*60})
-            let response = new NextResponse({message: "password correct", status: true})
-            response.cookies.set('token_forms', token_forms, {
-                httpOnly: true, 
-                path: '/form', 
-                maxAge: 1800,
-            })
-
-            return response; 
+            return new Response (
+                JSON.stringify({message: "password correct", status: true}),
+                {
+                    status: 200,
+                    headers: {
+                        "Set-Cookie": `token_forms=${token_forms}; HttpOnly; Path=/form; Max-Age=1800`,
+                    },
+                }
+            ); 
         }else{
             return NextResponse.json({message: "password incorrect", status: false})
         }
