@@ -172,6 +172,7 @@ export default function SubmissionForm() {
             const result = await response.json();
             if (result.message === "created") {
                 alert("Patient data saved successfully!");
+                sessionStorage.clear();
                 router.push('/form/finish');
             }
         } catch (error) {
