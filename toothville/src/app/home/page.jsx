@@ -130,9 +130,9 @@ function Actions(){
 
 
 export default function Dashboard() {
-  const [numPatients, setNumPatients] = React.useState(0);
-  const [earnings, setEarnings] = React.useState(0);
-  const [newPatients, setNewPatients] = React.useState(0);
+  const [numPatients, setNumPatients] = useState(0);
+  const [earnings, setEarnings] = useState(0);
+  const [newPatients, setNewPatients] = useState(0);
   const [currentDate, setCurrentDate] = useState("");
   const [user, setUser] = useState({
     name: "", 
