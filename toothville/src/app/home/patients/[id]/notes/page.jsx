@@ -24,7 +24,7 @@ import {Combobox} from "./Combobox"
 import { BASE_URL } from "@/utils/constants"
   
 
-export default function page({params}) {
+export default function Page({params}) {
     const { id }  = params
     const [currDate, setDate] = useState((new Date()).toISOString().split("T")[0]);
     const [notes, setNotes] = useState([]); 

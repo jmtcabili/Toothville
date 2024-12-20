@@ -907,7 +907,7 @@ export default function ViewForms({ params }) {
                     <Accordion type="single" collapsible className={styles.accordion} defaultValue="">
                         <AccordionItem value="medicalHistory" className={styles.accordionItem}>
                             <AccordionTrigger className={styles.accordionTrigger}>
-                                <span>Driver's License</span>
+                                <span>Driver&apos;s License</span>
                             </AccordionTrigger>
                             <AccordionContent className={styles.accordionContent}>
                                 {displayedIdentificationInfo.map((item, index) => (

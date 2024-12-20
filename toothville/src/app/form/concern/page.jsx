@@ -213,7 +213,7 @@ export default function SubmissionForm() {
                     />
                     <div>
                     <br></br>
-                        <label className={styles.label}>Patient's Signature:</label>
+                        <label className={styles.label}>Patient&apos;s Signature:</label>
                         {patientSignature ? (
                             <img
                                 src={`data:image/png;base64,${patientSignature}`}
@@ -231,7 +231,7 @@ export default function SubmissionForm() {
                             Add Patient Signature
                         </button>
                         <br></br>
-                        <label className={styles.label}>Dentist's Signature:</label>
+                        <label className={styles.label}>Dentist&apos;s Signature:</label>
                         {dentistSignature ? (
                             <img
                                 src={`data:image/png;base64,${dentistSignature}`}

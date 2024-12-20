@@ -44,7 +44,7 @@ import { BASE_URL } from '@/utils/constants'
 
 
 
-export default function dentalChart({params}) {
+export default function DentalChart({params}) {
 
     const { id } = params
     const [chart, setChart] = useState({
