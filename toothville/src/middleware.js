@@ -11,6 +11,14 @@ export function middleware(request) {
         return response;
     }
 
+    //handle patient form submission
+    if (pathname === '/form/finish'){
+        const response = NextResponse.redirect(new URL('/form/success', request.url));
+       response.cookies.set('token_forms', '', { path: '/form', maxAge: 0 }); // Clear the 'token_forms' cookie
+        console.log("response:", response);
+        return response;
+    }
+    
     const token = request.cookies.get('token');
     const token_forms = request.cookies.get('token_forms');
 

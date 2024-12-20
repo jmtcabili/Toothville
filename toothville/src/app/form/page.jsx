@@ -8,7 +8,7 @@ import {Input} from "@/components/ui/input";
 import Spinner from "@/components/ui/spinner";
 import { BASE_URL } from "@/utils/constants";
 
-const Header = () => {
+function Header(){
     return(
         <>
             <header className = {styles.header}>
@@ -25,11 +25,12 @@ export default function FormQR(){
     const router = useRouter();
 
     const handleSubmit = async(e) => {
-        console.log(passRef.current.value);
         setDisableSubmit(true);
         //check with db if password is correct then route
         try{
             const inputPassword = passRef.current.value;
+           
+            
             const res = await fetch(`${BASE_URL}/api/formPassword`, {
                 method: "POST",
                 headers: {
@@ -37,7 +38,7 @@ export default function FormQR(){
                 },
                 body: JSON.stringify({ inputPassword: inputPassword }),
             })
-            console.log(res);
+       
             
             const data = await res.json();
             console.log(data);
