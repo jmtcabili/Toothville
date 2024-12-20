@@ -141,7 +141,7 @@ export default function Dashboard() {
 
   const getPatients = async () => {
      
-    const resCount = await fetch(`${BASE_URL}/api/dashboard`);
+    const resCount = await fetch(`${BASE_URL}/api/dashboard`, {cache: 'no-store'});
     const {allCount, newCount, earnings} = await resCount.json();
 
     setNumPatients(allCount);
