@@ -172,7 +172,8 @@ export default function SubmissionForm() {
             const result = await response.json();
             if (result.message === "created") {
                 alert("Patient data saved successfully!");
-                router.push('/home');
+                sessionStorage.clear();
+                router.push('/form/finish');
             }
         } catch (error) {
             console.error('Error submitting form:', error);

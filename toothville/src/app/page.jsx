@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import styles from "./page.module.css";
 import Link from "next/link";
+import Spinner from "@/components/ui/spinner";
 
 import { ExclamationCircleIcon } from "@heroicons/react/24/solid";
 import { BASE_URL } from "@/utils/constants";
@@ -16,6 +17,10 @@ const Page = () => {
   const [showGreeting, setShowGreeting] = useState(false);
   const router = useRouter();
 
+  const [disableSignIn, setDisableSignIn] = useState(false);
+  const [disableSignUp, setDisableSignUp] = useState(false);
+
+
   useEffect(() => {
     setTimeout(() => {
       setShowGreeting(true);
@@ -24,7 +29,7 @@ const Page = () => {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-
+    setDisableSignIn(true);
     try {
       const res = await fetch(`${BASE_URL}/api/auth/signin`, {
         method: "POST",
@@ -41,9 +46,11 @@ const Page = () => {
       } else {
         setError("Invalid username or password");
         setInputError({ username: true, password: true });
+        setDisableSignIn(false);
       }
     } catch (err) {
       setError("Something went wrong. Please try again later.");
+      setDisableSignIn(false);
       setInputError({ username: true, password: true });
     }
   };
@@ -58,72 +65,79 @@ const Page = () => {
     }
   };
 
+
+
   if (!BASE_URL){
     return null; 
   }
   return (
     <div className={styles.container}>
-      <div className={styles["form-container"]}>
-        <img
-          src="/assets/banner.png"
-          alt="Toothville Logo"
-          className={styles.logo}
-        />
-        <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Welcome back!
-        </div>
-
-        <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-          Enter account details to log in!
-        </div>
-
-        {error && (
-            <div className={styles.error}>
-              <ExclamationCircleIcon className={styles.errorIcon} />
-              {error}
+        <div className={styles["form-container"]}>
+            <img
+                src="/assets/banner.png"
+                alt="Toothville Logo"
+                className={styles.logo}
+            />
+            <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
+                Welcome back!
             </div>
-          )}
-          
-        <form className={styles.form} onSubmit={handleSignIn}>
-          <div className={styles.inputGroup}>
-            <label htmlFor="username">Username</label>
-            <input
-              type="text"
-              id="username"
-              value={username}
-              onChange={(e) => handleInputChange("username", e.target.value)}
-              className={`${styles.inputField} ${inputError.username ? styles.errorInput : ""}`}
-              required
-            />
-          </div>
-         
-          <div className={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => handleInputChange("password", e.target.value)}
-              className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
-              required
-            />
-          </div>
 
-          <button
-            type="submit"
-            className={`${styles.commonButton} ${styles.signInButton}`}
-          >
-            Sign In
-          </button>
+            <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
+                Enter account details to log in!
+            </div>
 
-          <Link
-            href="/signup"
-            className={`${styles.commonButton} ${styles.thirdButton}`}
-          >
-            Don't have an account?
-          </Link>
-        </form>
-      </div>
+            {error && (
+                <div className={styles.error}>
+                    <ExclamationCircleIcon className={styles.errorIcon} />
+                    {error}
+                </div>
+            )}
+            
+            <form className={styles.form} onSubmit={handleSignIn}>
+                <div className={styles.inputGroup}>
+                <label htmlFor="username">Username</label>
+                <input
+                    type="text"
+                    id="username"
+                    value={username}
+                    onChange={(e) => handleInputChange("username", e.target.value)}
+                    className={`${styles.inputField} ${inputError.username ? styles.errorInput : ""}`}
+                    required
+                />
+                </div>
+                
+                <div className={styles.inputGroup}>
+                <label htmlFor="password">Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    value={password}
+                    onChange={(e) => handleInputChange("password", e.target.value)}
+                    className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
+                    required
+                />
+                </div>
+                
+                <button type="submit"
+                        className={`w-full p-2.5 mt-2.5 flex flex-row justify-center items-center ${!disableSignIn ? "bg-nav_blue" : "bg-blue-400"} cursor:pointer text-white rounded-md relative`}
+                        disabled={disableSignIn}>
+                    <div className="flex flex-row justify-center items-center"> 
+                        Sign in
+                    </div>
+                    {disableSignIn && 
+                    <div className="absolute left-3"><Spinner dim = {20} isDarkBg={true}/></div>}
+                </button>
+            
+             
+                <Link href={(disableSignIn) ? "javascript:void(0)" : "/signup"}  className={`${styles.commonButton} ${styles.thirdButton} relative flex flex-col justify-center items-center`}
+                      onClick={() => {if (!disableSignIn) setDisableSignUp(true)}}>
+                    <div>Don't have an account?</div>
+                    {disableSignUp && 
+                    <div className="absolute left-3"><Spinner dim = {20} isDarkBg={false}/></div>}
+                </Link>
+              
+            </form>
+        </div>
     </div>
   );
 };
