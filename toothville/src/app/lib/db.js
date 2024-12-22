@@ -169,15 +169,21 @@ const formPasswordSchema = new Schema ({
     password: String,
 })
 
+const appCodeSchema = new Schema ({
+    code: String,
+})
+
 
 
 const patientModel = mongoose.models.patient || mongoose.model("patient", patientSchema);
 const notesModel = mongoose.models.patientNote || mongoose.model("patientNote", notesSchema);
 const proceduresModel = mongoose.models.procedure || mongoose.model("procedure", procedureSchema);
 const formPasswordModel = mongoose.models.formPassword || mongoose.model("formPassword", formPasswordSchema);
+const appCodeModel = mongoose.models.appCode || mongoose.model("appCode", appCodeSchema);
 
 export { patientModel };
 export { notesModel };
 export { proceduresModel };
 export { formPasswordModel };
+export { appCodeModel };
 export default dbConnect

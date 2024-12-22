@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef} from "react";
 import { useRouter } from "next/navigation"; // Client-side navigation
 import styles from "../../page.module.css";
 import Link from "next/link";
@@ -12,8 +12,9 @@ import { BASE_URL } from "@/utils/constants";
 const SignUp = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const accountCodeRef = useRef(null);
   const [error, setError] = useState("");
-  const [inputError, setInputError] = useState({ username: false, password: false });
+  const [inputError, setInputError] = useState({ username: false, password: false, appCode: false});
   const [showGreeting, setShowGreeting] = useState(false);
   const router = useRouter();
 
@@ -39,9 +40,11 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setDisableRegister(true)
+    let inputCode = accountCodeRef.current.value;
+
     if (password.length < 5) {
       setError("Password must be at least 5 characters long.");
-      setInputError({ username: false, password: true });
+      setInputError({ username: false, password: true, appCode: false });
       return;
     }else{
       try {
@@ -50,19 +53,24 @@ const SignUp = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ username, password }),
+          body: JSON.stringify({ username, inputCode, password}),
         });
   
         if (res.status === 201) {
-          setInputError({ username: false, password: false });
-          router.push("/?success=Account created");
+          setInputError({ username: false, password: false, appCode: false});
+          router.push("/");
         } else {
-          setError("Username is already taken. Please choose a different one.");
-          setInputError({ username: true, password: true });
+          const errMsg = await res.text();
+          setError(errMsg);
+          if (errMsg === "User already exists") {
+            setInputError({ username: true, password: false, appCode: false });
+          }else if (errMsg === "Invalid code"){
+            setInputError({ username: false, password: false, appCode: true }); 
+          }
         }
       } catch (err) {
         setError("Something went wrong. Please try again.");
-        setInputError({ username: true, password: true });
+        setInputError({ username: true, password: true, appCode:true});
       } finally {
         setDisableRegister(false)
       }
@@ -77,10 +85,6 @@ const SignUp = () => {
                 alt="Toothville Logo"
                 className={styles.logo}
             />
-            <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
-                Welcome!
-            </div>
-
             <div className={`${styles.greetingBox} ${showGreeting ? styles.show : ""}`}>
                 Sign up for an account!
             </div>
@@ -105,15 +109,25 @@ const SignUp = () => {
             />
             </div>
             <div className={styles.inputGroup}>
-            <label htmlFor="password">Password</label>
-            <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => handleInputChange("password", e.target.value)}
-                className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
-                required
-            />
+              <label htmlFor="accountCode">Account Code</label>
+              <input
+                  type="password"
+                  id="accountCode"
+                  ref={accountCodeRef}
+                  className={`${styles.inputField} ${inputError.appCode ? styles.errorInput : ""}`}
+                  required
+              />
+            </div>
+            <div className={styles.inputGroup}>
+              <label htmlFor="password">Password</label>
+              <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => handleInputChange("password", e.target.value)}
+                  className={`${styles.inputField} ${inputError.password ? styles.errorInput : ""}`}
+                  required
+              />
             </div>
 
             <button type="submit" 
